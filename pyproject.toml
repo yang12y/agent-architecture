@@ -1,0 +1,69 @@
+[project]
+name = "yzy-agent"
+version = "0.1.0"
+description = "通用 Agent 后端：九维度模块化架构，HTTP + SSE"
+readme = "README.md"
+authors = [
+    { name = "杨子毅", email = "1786628460@qq.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.143.0",
+    "openai>=3.29.0",
+    "pydantic>=2.0.0",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.22,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.15.18",
+]
+
+[tool.pytest.ini_options]
+# 异步测试不用逐个加 @pytest.mark.asyncio
+asyncio_mode = "auto"
+testpaths = ["tests"]
+# 让测试文件能 import fakes（测试专用假件不放进 src）
+pythonpath = ["tests"]
+# 关掉缓存插件：它在受限环境里会往项目根目录落 pytest-cache-files-XXXX 临时目录，
+# 且落下来之后普通权限删不掉。测试套件只跑几十毫秒，--lf / --ff 没有收益。
+addopts = "-p no:cacheprovider"
+
+
+[tool.ruff]
+# 行宽。ruff 默认 88 列，而本项目实际按 100 列写；不写这条，ruff format 会把现有代码整片重排。
+line-length = 100
+# 目标 Python 版本。ruff 本来会从 requires-python 推断，写明是为了不随推断规则变化。
+target-version = "py313"
+# 源码根。tests/ 也算一个：不写这条，ruff 会把 fakes 当第三方包，跟 pytest 挤在同一段里，
+# 而它其实是本项目自己的测试假件（pytest 的 pythonpath 就是这么配的）。
+src = ["src", "tests"]
+# 排除测试临时目录。测试的落盘用例会把会话写进 .tmp/ 下，ruff 扫到会直接崩
+# （它按源码文件解析，而那些是运行期产物）。
+extend-exclude = [".tmp"]
+
+
+[tool.ruff.lint]
+# 规则集**必须显式钉死**：ruff 会随版本扩大默认规则集 —— 0.15 的默认是 E4/E7/E9/F，
+# 0.17 已经多出 I / RUF / UP / C4 / S 等，同一个仓库从一个错都不报变成报 30 条。
+# 不写这行，lint 结果就等于"取决于本机装了哪个版本的 ruff"。
+# 想扩规则时在这里加，扩完必须把新报的问题一并修干净，别留一堆已知告警。
+#
+# 各项含义：
+#   E4 / E7 / E9  pycodestyle：import 位置、语句写法、语法级错误
+#   F             pyflakes：未使用的 import 与变量、未定义的名字
+#   I             isort：import 分组与排序
+#   UP            pyupgrade：按目标 Python 版本升级旧写法（如 timezone.utc -> UTC）
+#   C4            flake8-comprehensions：多余的 dict()/list() 构造
+#   RUF100        清掉已经不生效的 noqa 注释
+#
+# 刻意不开 RUF022（__all__ 排序）：它会要求 __all__ 是一个扁平字母序列表，
+# 而 contracts/__init__.py 的 70 项导出是按来源模块分组、每组带注释的，压平就丢了这层信息。
+select = ["E4", "E7", "E9", "F", "I", "UP", "C4", "RUF100"]

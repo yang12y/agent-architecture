@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>yzy-agent</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span>yzy-agent</span>
+      </div>
+
+      <button id="new-session" class="new-session" type="button">＋ 新建会话</button>
+
+      <nav id="sessions" class="sessions" aria-label="会话列表"></nav>
+
+      <footer class="sidebar-foot">
+        用户：<span id="user-id"></span>
+      </footer>
+    </aside>
+
+    <main class="chat">
+      <header class="chat-head">
+        <div class="chat-title">
+          <h1 id="session-title">未选择会话</h1>
+          <p id="session-meta" class="muted"></p>
+        </div>
+        <div class="chat-actions">
+          <span id="connection" class="pill">连接中…</span>
+        </div>
+      </header>
+
+      <section id="messages" class="messages" aria-live="polite"></section>
+
+      <form id="composer" class="composer">
+        <textarea
+          id="input"
+          rows="1"
+          placeholder="说点什么…（Enter 发送，Shift+Enter 换行）"
+        ></textarea>
+        <button id="send" type="submit">发送</button>
+      </form>
+
+      <footer id="stats" class="stats" aria-label="会话统计"></footer>
+    </main>
+
+    <div id="approval-layer" class="approval-layer" hidden></div>
+    <div id="toast" class="toast" role="status" hidden></div>
+
+    <script type="module" src="/js/main.js"></script>
+  </body>
+</html>
