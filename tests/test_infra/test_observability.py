@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import io
 
-from yzy_agent.infra.observability import (
+from agent_architecture.infra.observability import (
     InProcessEventBus,
     NullLogger,
     RecordingLogger,

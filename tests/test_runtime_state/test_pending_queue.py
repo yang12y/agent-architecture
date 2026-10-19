@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import Message, MessageRole, TextPart
+from agent_architecture.modules.runtime_state import drain_messages, enqueue_message
 from fakes import make_runtime_state
-from yzy_agent.contracts import Message, MessageRole, TextPart
-from yzy_agent.modules.runtime_state import drain_messages, enqueue_message
 
 
 def _msg(text: str) -> Message:

@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import MessageRole, SideEffect
+from agent_architecture.modules.checkpoint import dangling_calls, is_retryable, result_message
 from fakes import make_tool_declaration
 from test_checkpoint.traces import TRACE_ID, broken_log
-from yzy_agent.contracts import MessageRole, SideEffect
-from yzy_agent.modules.checkpoint import dangling_calls, is_retryable, result_message
 
 # 三条代表性声明：只读、写但不接受幂等键、写且接受幂等键。
 READ = make_tool_declaration("read", side_effect=SideEffect.NONE)

@@ -2,16 +2,7 @@
 
 from __future__ import annotations
 
-from fakes import (
-    SequentialIds,
-    assistant_message,
-    make_ports,
-    make_session_meta,
-    make_site_context,
-    make_trace_context,
-    user_message,
-)
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     AssistantMessage,
     LlmAfterPayload,
     Permission,
@@ -23,8 +14,17 @@ from yzy_agent.contracts import (
     TraceStatus,
     TraceTrigger,
 )
-from yzy_agent.infra.observability import InProcessEventBus
-from yzy_agent.modules.session import Session, build_handlers
+from agent_architecture.infra.observability import InProcessEventBus
+from agent_architecture.modules.session import Session, build_handlers
+from fakes import (
+    SequentialIds,
+    assistant_message,
+    make_ports,
+    make_session_meta,
+    make_site_context,
+    make_trace_context,
+    user_message,
+)
 
 
 def _collect(events: InProcessEventBus) -> list[object]:

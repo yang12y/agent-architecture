@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from agent_architecture.modules.session import DraftSlot
 from fakes import START
-from yzy_agent.modules.session import DraftSlot
 
 
 def _slot() -> DraftSlot:

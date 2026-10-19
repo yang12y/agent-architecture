@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import SessionEntryType
+from agent_architecture.modules.session import SessionLog
 from fakes import SequentialIds, make_entry, user_message
-from yzy_agent.contracts import SessionEntryType
-from yzy_agent.modules.session import SessionLog
 
 
 def _log(entries=()) -> SessionLog:

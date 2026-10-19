@@ -8,17 +8,17 @@ from pathlib import Path
 
 import pytest
 
-from fakes import make_session_meta
-from yzy_agent.contracts import ConfigError, Permission
-from yzy_agent.infra.config import (
+from agent_architecture.contracts import ConfigError, Permission
+from agent_architecture.infra.config import (
     freeze_config,
     load_app_config,
     parse_env_text,
     read_env_file,
     resolve_env_file,
 )
-from yzy_agent.infra.config import loader as config_loader
-from yzy_agent.infra.config.defaults import DEFAULT_MAX_TOKENS, DEFAULT_MODEL
+from agent_architecture.infra.config import loader as config_loader
+from agent_architecture.infra.config.defaults import DEFAULT_MAX_TOKENS, DEFAULT_MODEL
+from fakes import make_session_meta
 
 
 @pytest.fixture

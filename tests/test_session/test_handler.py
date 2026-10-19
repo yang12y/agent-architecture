@@ -5,16 +5,7 @@
 
 from __future__ import annotations
 
-from fakes import (
-    START,
-    SequentialIds,
-    assistant_message,
-    make_session_meta,
-    make_site_context,
-    make_trace_context,
-    user_message,
-)
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     Handler,
     LlmAfterPayload,
     LlmBeforePayload,
@@ -33,8 +24,17 @@ from yzy_agent.contracts import (
     TraceStatus,
     TraceTrigger,
 )
-from yzy_agent.modules.agent_loop import HandlerRegistry
-from yzy_agent.modules.session import Session, build_handlers
+from agent_architecture.modules.agent_loop import HandlerRegistry
+from agent_architecture.modules.session import Session, build_handlers
+from fakes import (
+    START,
+    SequentialIds,
+    assistant_message,
+    make_session_meta,
+    make_site_context,
+    make_trace_context,
+    user_message,
+)
 
 
 def _session() -> Session:
@@ -293,7 +293,7 @@ def test_registers_six_handlers_all_in_the_dimension_band() -> None:
 
 def test_order_against_runtime_state_at_each_shared_site() -> None:
     """和 runtime_state 的相对顺序是硬要求：它先搬 pending_messages，session 才写得到。"""
-    from yzy_agent.modules.runtime_state import build_handlers as runtime_state_handlers
+    from agent_architecture.modules.runtime_state import build_handlers as runtime_state_handlers
 
     def priority_at(handlers, site: Site) -> int:
         return next(h for h in handlers if site in h.sites).priority

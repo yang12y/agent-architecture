@@ -2,6 +2,14 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import (
+    CompactionEntryPayload,
+    MessageRole,
+    SessionEntryType,
+    TraceEndEntryPayload,
+    TraceStatus,
+)
+from agent_architecture.modules.session import Session, project
 from fakes import (
     START,
     SequentialIds,
@@ -10,14 +18,6 @@ from fakes import (
     make_session_meta,
     user_message,
 )
-from yzy_agent.contracts import (
-    CompactionEntryPayload,
-    MessageRole,
-    SessionEntryType,
-    TraceEndEntryPayload,
-    TraceStatus,
-)
-from yzy_agent.modules.session import Session, project
 
 
 def _session(entries=(), session_id: str = "sess_test") -> Session:

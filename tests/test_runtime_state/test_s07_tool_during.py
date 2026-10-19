@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import Site, ToolCall, ToolCallStatus, ToolDuringPayload
+from agent_architecture.modules.runtime_state import s07_tool_during
 from fakes import make_site_context
-from yzy_agent.contracts import Site, ToolCall, ToolCallStatus, ToolDuringPayload
-from yzy_agent.modules.runtime_state import s07_tool_during
 
 
 def _call(status: ToolCallStatus = ToolCallStatus.PENDING) -> ToolCall:

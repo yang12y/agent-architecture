@@ -1,4 +1,4 @@
-# yzy-agent
+# agent-architecture
 
 通用 Agent 后端。九个维度模块化，靠「十个注入位点」解耦：**内核只负责走位点、调模型收流、判定终止**，其余逻辑全部挂载在位点上。
 
@@ -31,7 +31,7 @@ uv run python scripts/check_llm.py   # 对真实模型发一条最短消息，�
 ## 启动后端
 
 ```bash
-uv run uvicorn yzy_agent.api.main:app --host 127.0.0.1 --port 8000
+uv run uvicorn agent_architecture.api.main:app --host 127.0.0.1 --port 8000
 ```
 
 - **打开 <http://127.0.0.1:8000/> 就是页面**：左边会话列表，右边对话，要审批的工具调用会弹卡片

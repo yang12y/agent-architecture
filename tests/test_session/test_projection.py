@@ -2,20 +2,20 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import (
+    CompactionEntryPayload,
+    MessageRole,
+    TraceEndEntryPayload,
+    TraceStatus,
+)
+from agent_architecture.modules.session import project
+from agent_architecture.modules.session.projection import DRAFT_PREFIX, SUMMARY_PREFIX
 from fakes import (
     assistant_message,
     make_entry,
     tool_message,
     user_message,
 )
-from yzy_agent.contracts import (
-    CompactionEntryPayload,
-    MessageRole,
-    TraceEndEntryPayload,
-    TraceStatus,
-)
-from yzy_agent.modules.session import project
-from yzy_agent.modules.session.projection import DRAFT_PREFIX, SUMMARY_PREFIX
 
 
 def _roles(messages) -> list[MessageRole]:

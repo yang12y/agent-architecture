@@ -11,9 +11,9 @@ from pathlib import Path
 
 import httpx
 
+from agent_architecture.api import create_app
+from agent_architecture.composition import build_container
 from fakes import USER, ScriptedLlm, make_app_config, text_turn, tool_turn
-from yzy_agent.api import create_app
-from yzy_agent.composition import build_container
 
 # 越界的那个文件，相对工作目录的位置。工作目录是 <scratch>/ws，于是它落在 <scratch>/outside.txt。
 #

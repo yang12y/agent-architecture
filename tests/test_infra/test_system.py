@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 
-from yzy_agent.contracts import Message, MessageRole, TextPart, ThinkingPart, ToolCallPart
-from yzy_agent.infra.system import (
+from agent_architecture.contracts import Message, MessageRole, TextPart, ThinkingPart, ToolCallPart
+from agent_architecture.infra.system import (
     MESSAGE_OVERHEAD_TOKENS,
     HeuristicTokenCounter,
     SystemClock,

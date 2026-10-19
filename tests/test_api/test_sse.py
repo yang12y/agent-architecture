@@ -16,15 +16,15 @@ import httpx
 import pytest
 from fastapi import FastAPI
 
+from agent_architecture.api import create_app
+from agent_architecture.api.sse import endpoint as sse_endpoint
+from agent_architecture.api.sse import hub as hub_module
+from agent_architecture.api.sse.frames import event_frame, to_text
+from agent_architecture.api.sse.hub import Connection, Hub
+from agent_architecture.composition import build_container
+from agent_architecture.contracts import AssistantThought, TurnStart
+from agent_architecture.infra.observability import InProcessEventBus
 from fakes import USER, ScriptedLlm, make_app_config, text_turn
-from yzy_agent.api import create_app
-from yzy_agent.api.sse import endpoint as sse_endpoint
-from yzy_agent.api.sse import hub as hub_module
-from yzy_agent.api.sse.frames import event_frame, to_text
-from yzy_agent.api.sse.hub import Connection, Hub
-from yzy_agent.composition import build_container
-from yzy_agent.contracts import AssistantThought, TurnStart
-from yzy_agent.infra.observability import InProcessEventBus
 
 
 def test_an_event_frame_carries_its_session() -> None:

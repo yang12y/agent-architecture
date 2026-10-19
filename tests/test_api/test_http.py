@@ -12,6 +12,10 @@ from pathlib import Path
 import httpx
 import pytest
 
+from agent_architecture.api import create_app
+from agent_architecture.api.schemas import DEFAULT_PAGE_SIZE
+from agent_architecture.composition import Container, build_container
+from agent_architecture.contracts import SessionEntryType
 from fakes import (
     START,
     USER,
@@ -22,10 +26,6 @@ from fakes import (
     thought_turn,
     user_message,
 )
-from yzy_agent.api import create_app
-from yzy_agent.api.schemas import DEFAULT_PAGE_SIZE
-from yzy_agent.composition import Container, build_container
-from yzy_agent.contracts import SessionEntryType
 
 
 def _client(scratch_dir: Path, llm: object) -> tuple[httpx.AsyncClient, Container]:

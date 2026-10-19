@@ -6,15 +6,15 @@ from pathlib import Path
 
 import pytest
 
-from fakes import make_tool_declaration
-from yzy_agent.contracts import ToolArgumentError
-from yzy_agent.modules.sandbox import (
+from agent_architecture.contracts import ToolArgumentError
+from agent_architecture.modules.sandbox import (
     ARGUMENT_KINDS,
     ResourceKind,
     inside,
     resolve_path,
     route,
 )
+from fakes import make_tool_declaration
 
 
 def test_route_finds_every_managed_kind_declared() -> None:

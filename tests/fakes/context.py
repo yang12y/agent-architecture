@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections import deque
 from datetime import UTC, datetime
 
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     AppConfig,
     ApprovalProvider,
     CancelToken,
@@ -19,8 +19,8 @@ from yzy_agent.contracts import (
     ToolRegistry,
     TraceContext,
 )
-from yzy_agent.infra.observability import InProcessEventBus, RecordingLogger
-from yzy_agent.infra.system import HeuristicTokenCounter
+from agent_architecture.infra.observability import InProcessEventBus, RecordingLogger
+from agent_architecture.infra.system import HeuristicTokenCounter
 
 from .clock import FakeClock
 from .ids import SequentialIds

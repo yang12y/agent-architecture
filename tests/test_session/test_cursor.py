@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import CompactionEntryPayload
+from agent_architecture.modules.session import cursor
 from fakes import assistant_message, make_entry, user_message
-from yzy_agent.contracts import CompactionEntryPayload
-from yzy_agent.modules.session import cursor
 
 
 def _entries():

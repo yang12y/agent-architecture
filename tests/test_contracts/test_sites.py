@@ -6,8 +6,7 @@
 
 from __future__ import annotations
 
-from fakes import make_trace_context
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     CancelToken,
     LlmBeforePayload,
     Message,
@@ -23,6 +22,7 @@ from yzy_agent.contracts import (
     TurnBeforePayload,
     TurnEndPayload,
 )
+from fakes import make_trace_context
 
 # 十位点的字符串值，顺序就是它们的时间顺序。
 EXPECTED_SITE_VALUES = [

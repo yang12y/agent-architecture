@@ -12,6 +12,8 @@ from pathlib import Path
 
 import pytest
 
+from agent_architecture.contracts import Ports, TraceContext
+from agent_architecture.infra.observability import InProcessEventBus, RecordingLogger
 from fakes import (
     FakeClock,
     SequentialIds,
@@ -20,8 +22,6 @@ from fakes import (
     make_runtime_state,
     make_trace_context,
 )
-from yzy_agent.contracts import Ports, TraceContext
-from yzy_agent.infra.observability import InProcessEventBus, RecordingLogger
 
 
 @pytest.fixture

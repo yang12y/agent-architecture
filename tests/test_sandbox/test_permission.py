@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from yzy_agent.contracts import Permission
-from yzy_agent.modules.sandbox import PERMISSION_LADDER, at_least, rank
+from agent_architecture.contracts import Permission
+from agent_architecture.modules.sandbox import PERMISSION_LADDER, at_least, rank
 
 
 def test_the_ladder_runs_from_read_only_to_full_access() -> None:

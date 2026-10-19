@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pytest
 
+from agent_architecture.contracts import Site, SiteAbort, SiteContext, TurnBeforePayload
+from agent_architecture.infra.observability import RecordingLogger
+from agent_architecture.modules.hook import HookRegistry, events, run_hooks
 from fakes import make_ports, make_site_context, make_trace_context
-from yzy_agent.contracts import Site, SiteAbort, SiteContext, TurnBeforePayload
-from yzy_agent.infra.observability import RecordingLogger
-from yzy_agent.modules.hook import HookRegistry, events, run_hooks
 
 
 def _ctx(site: Site) -> tuple[SiteContext, RecordingLogger]:

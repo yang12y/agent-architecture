@@ -14,9 +14,9 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 
-from yzy_agent.composition import build_container
-from yzy_agent.contracts import LlmChunk, LlmRequest, Site
-from yzy_agent.infra.config import load_app_config
+from agent_architecture.composition import build_container
+from agent_architecture.contracts import LlmChunk, LlmRequest, Site
+from agent_architecture.infra.config import load_app_config
 
 
 class _NoLlm:

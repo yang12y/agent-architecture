@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from agent_architecture.composition import build_container
 from fakes import ScriptedLlm, make_app_config
-from yzy_agent.composition import build_container
 
 # 文档位置，相对项目根（pytest 从根目录跑）。
 #

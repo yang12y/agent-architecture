@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from yzy_agent.contracts import ApprovalDecision, ApprovalRequest, ApprovalResult
+from agent_architecture.contracts import ApprovalDecision, ApprovalRequest, ApprovalResult
 
 
 class FakeApprovals:

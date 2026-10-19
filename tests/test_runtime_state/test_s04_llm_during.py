@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import LlmDuringPayload, Site
+from agent_architecture.modules.runtime_state import s04_llm_during
 from fakes import make_runtime_state, make_site_context, make_trace_context
-from yzy_agent.contracts import LlmDuringPayload, Site
-from yzy_agent.modules.runtime_state import s04_llm_during
 
 
 def test_attempt_number_is_recorded() -> None:

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from yzy_agent.contracts import Permission, SideEffect, ToolDeclaration
+from agent_architecture.contracts import Permission, SideEffect, ToolDeclaration
 
 
 def make_tool_declaration(

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import TraceStatus
+from agent_architecture.modules.checkpoint import TailKind, classify_tail, open_trace_id
 from test_checkpoint.traces import TRACE_ID, broken_log, trace_end, trace_start
-from yzy_agent.contracts import TraceStatus
-from yzy_agent.modules.checkpoint import TailKind, classify_tail, open_trace_id
 
 
 def test_an_empty_log_is_closed() -> None:

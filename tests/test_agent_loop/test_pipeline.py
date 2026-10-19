@@ -7,15 +7,15 @@ from __future__ import annotations
 
 import pytest
 
-from fakes import HandlerSpy, RecordingHandler, make_trace_context
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     FlushError,
     Site,
     SiteContext,
     ToolBeforePayload,
     TurnBeforePayload,
 )
-from yzy_agent.modules.agent_loop import HandlerRegistry, SitePipeline
+from agent_architecture.modules.agent_loop import HandlerRegistry, SitePipeline
+from fakes import HandlerSpy, RecordingHandler, make_trace_context
 
 
 async def test_handlers_run_in_priority_order() -> None:

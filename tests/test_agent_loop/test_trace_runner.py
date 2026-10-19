@@ -12,20 +12,7 @@ from collections.abc import Awaitable, Callable, Iterable
 
 import pytest
 
-from fakes import (
-    BlockingLlm,
-    FailingLlm,
-    PartialThenFailLlm,
-    ScriptedLlm,
-    StopDuringStreamLlm,
-    StubSession,
-    make_frozen_config,
-    make_ports,
-    make_trace_context,
-    text_turn,
-    tool_turn,
-)
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     AgentError,
     CancelToken,
     ContextOverflowError,
@@ -47,8 +34,21 @@ from yzy_agent.contracts import (
     TraceStatus,
     TraceTrigger,
 )
-from yzy_agent.infra.config import load_app_config
-from yzy_agent.modules.agent_loop import Agent, HandlerRegistry, SitePipeline, TraceRunner
+from agent_architecture.infra.config import load_app_config
+from agent_architecture.modules.agent_loop import Agent, HandlerRegistry, SitePipeline, TraceRunner
+from fakes import (
+    BlockingLlm,
+    FailingLlm,
+    PartialThenFailLlm,
+    ScriptedLlm,
+    StopDuringStreamLlm,
+    StubSession,
+    make_frozen_config,
+    make_ports,
+    make_trace_context,
+    text_turn,
+    tool_turn,
+)
 
 
 class OnSite:

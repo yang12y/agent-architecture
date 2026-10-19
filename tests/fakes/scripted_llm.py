@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 from collections.abc import AsyncIterator, Sequence
 
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     CancelToken,
     JsonValue,
     LlmChunk,

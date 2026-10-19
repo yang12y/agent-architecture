@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from agent_architecture.composition import build_container
+from agent_architecture.contracts import TraceStatus
+from agent_architecture.modules.hook import events
 from fakes import USER, ScriptedLlm, make_app_config, text_turn, user_message
-from yzy_agent.composition import build_container
-from yzy_agent.contracts import TraceStatus
-from yzy_agent.modules.hook import events
 
 
 def _container(scratch_dir: Path, llm: ScriptedLlm):

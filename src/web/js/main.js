@@ -10,7 +10,7 @@ import { createStream } from "./stream.js";
 import * as view from "./view.js";
 
 // 浏览器里记一下身份，刷新之后还是同一个用户的会话。
-const USER_KEY = "yzy-agent.user";
+const USER_KEY = "agent-architecture.user";
 
 function resolveUserId() {
   const stored = localStorage.getItem(USER_KEY);

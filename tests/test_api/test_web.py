@@ -11,9 +11,9 @@ from pathlib import Path
 import httpx
 import pytest
 
+from agent_architecture.api import create_app
+from agent_architecture.composition import build_container
 from fakes import ScriptedLlm, make_app_config
-from yzy_agent.api import create_app
-from yzy_agent.composition import build_container
 
 
 @pytest.fixture
@@ -35,7 +35,7 @@ async def test_the_root_serves_the_page(client: httpx.AsyncClient) -> None:
 
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
-    assert "yzy-agent" in response.text
+    assert "agent-architecture" in response.text
 
 
 async def test_the_stylesheet_and_scripts_are_served(client: httpx.AsyncClient) -> None:

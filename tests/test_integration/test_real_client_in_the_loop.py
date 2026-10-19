@@ -13,6 +13,9 @@ from pathlib import Path
 
 from openai import APIConnectionError, AuthenticationError, BadRequestError, RateLimitError
 
+from agent_architecture.composition import Container, build_container
+from agent_architecture.contracts import SessionEntryType, TraceStatus
+from agent_architecture.infra.llm import OpenAiCompatibleClient
 from fakes import (
     REQUEST,
     USER,
@@ -22,9 +25,6 @@ from fakes import (
     make_app_config,
     user_message,
 )
-from yzy_agent.composition import Container, build_container
-from yzy_agent.contracts import SessionEntryType, TraceStatus
-from yzy_agent.infra.llm import OpenAiCompatibleClient
 
 
 def _text_turn(text: str) -> list:

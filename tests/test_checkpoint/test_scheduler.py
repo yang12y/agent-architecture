@@ -6,12 +6,12 @@ from pathlib import Path
 
 import pytest
 
+from agent_architecture.contracts import CompactionEntryPayload, FlushError
+from agent_architecture.infra.storage import FileSessionStore
+from agent_architecture.modules.checkpoint import Checkpoint
+from agent_architecture.modules.session import Session
 from fakes import START, USER, SequentialIds, make_entry, make_session_meta
 from test_checkpoint.traces import broken_log
-from yzy_agent.contracts import CompactionEntryPayload, FlushError
-from yzy_agent.infra.storage import FileSessionStore
-from yzy_agent.modules.checkpoint import Checkpoint
-from yzy_agent.modules.session import Session
 
 SESSION_ID = "sess_ab12"
 

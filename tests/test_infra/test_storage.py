@@ -6,10 +6,10 @@ from pathlib import Path
 
 import pytest
 
+from agent_architecture.contracts import FlushError, SessionEntryType
+from agent_architecture.infra.storage import FileSessionStore
+from agent_architecture.modules.session import Session
 from fakes import USER, SequentialIds, make_entry, make_session_meta, user_message
-from yzy_agent.contracts import FlushError, SessionEntryType
-from yzy_agent.infra.storage import FileSessionStore
-from yzy_agent.modules.session import Session
 
 
 def _store(scratch_dir: Path) -> FileSessionStore:

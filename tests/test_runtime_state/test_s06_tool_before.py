@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
-from fakes import make_runtime_state, make_site_context, make_trace_context
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     Site,
     ToolBeforePayload,
     ToolCall,
     ToolCallStatus,
     ToolDecision,
 )
-from yzy_agent.modules.runtime_state import s06_tool_before
+from agent_architecture.modules.runtime_state import s06_tool_before
+from fakes import make_runtime_state, make_site_context, make_trace_context
 
 
 def _call(call_id: str) -> ToolCall:

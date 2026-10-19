@@ -5,10 +5,10 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import Handler, Site, ToolStat, TurnBeforePayload
+from agent_architecture.modules.agent_loop import HandlerRegistry, SitePipeline
+from agent_architecture.modules.runtime_state import build_handlers
 from fakes import make_runtime_state, make_site_context, make_trace_context
-from yzy_agent.contracts import Handler, Site, ToolStat, TurnBeforePayload
-from yzy_agent.modules.agent_loop import HandlerRegistry, SitePipeline
-from yzy_agent.modules.runtime_state import build_handlers
 
 # runtime_state 声明要参与的九个位点。位点 9 不在其中，理由见 ops/__init__.py。
 EXPECTED_SITES = frozenset(

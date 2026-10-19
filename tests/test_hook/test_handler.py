@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import Site
+from agent_architecture.modules.agent_loop import HandlerRegistry
+from agent_architecture.modules.hook import PRIORITY_HOOKS, HookRegistry, build_handlers
 from fakes import RecordingHandler
-from yzy_agent.contracts import Site
-from yzy_agent.modules.agent_loop import HandlerRegistry
-from yzy_agent.modules.hook import PRIORITY_HOOKS, HookRegistry, build_handlers
 
 
 def _handlers() -> dict:

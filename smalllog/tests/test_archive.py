@@ -5,7 +5,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from smalllog import ArchiveError, LogWriter, archive_old_entries
 from smalllog.reader import read_from_offset
 

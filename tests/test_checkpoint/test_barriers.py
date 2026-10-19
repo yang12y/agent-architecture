@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from agent_architecture.infra.storage import FileSessionStore
+from agent_architecture.modules.checkpoint.barriers import ensure_persisted
+from agent_architecture.modules.session import Session
 from fakes import USER, SequentialIds, make_session_meta
 from test_checkpoint.traces import broken_log
-from yzy_agent.infra.storage import FileSessionStore
-from yzy_agent.modules.checkpoint.barriers import ensure_persisted
-from yzy_agent.modules.session import Session
 
 SESSION_ID = "sess_ab12"
 

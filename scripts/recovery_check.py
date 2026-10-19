@@ -22,8 +22,8 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from pathlib import Path
 
-from yzy_agent.composition import build_container
-from yzy_agent.contracts import (
+from agent_architecture.composition import build_container
+from agent_architecture.contracts import (
     AppConfig,
     LlmChunk,
     LlmChunkKind,
@@ -39,18 +39,18 @@ from yzy_agent.contracts import (
     TraceStatus,
     Usage,
 )
-from yzy_agent.infra.config import defaults
-from yzy_agent.modules.checkpoint.crash import TailKind, classify_tail
-from yzy_agent.modules.checkpoint.rebalance import dangling_calls
+from agent_architecture.infra.config import defaults
+from agent_architecture.modules.checkpoint.crash import TailKind, classify_tail
+from agent_architecture.modules.checkpoint.rebalance import dangling_calls
 
 # 仓库根。脚本从任何目录启动都能用。
 #
-# 举例：Path("D:/CodeProjects/yzy-agent")
+# 举例：Path("D:/CodeProjects/agent_architecture")
 ROOT = Path(__file__).resolve().parents[1]
 
 # 全部临时盘面都落在这里，跑完可以直接打开看。
 #
-# 举例：D:/CodeProjects/yzy-agent/.tmp/recovery-check
+# 举例：D:/CodeProjects/agent_architecture/.tmp/recovery-check
 WORK = ROOT / ".tmp" / "recovery-check"
 
 # 报告副本。中文经过 PowerShell 会乱码，所以正文另存一份 UTF-8。

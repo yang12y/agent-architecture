@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from fakes import make_runtime_state, make_site_context, make_trace_context
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     LlmAfterPayload,
     Message,
     MessageRole,
@@ -13,7 +12,8 @@ from yzy_agent.contracts import (
     ToolCallPart,
     ToolCallStatus,
 )
-from yzy_agent.modules.runtime_state import s05_llm_after
+from agent_architecture.modules.runtime_state import s05_llm_after
+from fakes import make_runtime_state, make_site_context, make_trace_context
 
 
 def _part(call_id: str, name: str, **arguments: object) -> ToolCallPart:

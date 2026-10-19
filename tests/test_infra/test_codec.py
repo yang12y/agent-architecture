@@ -6,10 +6,9 @@ from datetime import UTC, datetime
 
 import pytest
 
-from fakes import make_entry, make_session_meta, user_message
-from yzy_agent.contracts import Message, MessageRole, TextPart, ThinkingPart, ToolCallPart
-from yzy_agent.infra.storage import CodecError
-from yzy_agent.infra.storage.codec import (
+from agent_architecture.contracts import Message, MessageRole, TextPart, ThinkingPart, ToolCallPart
+from agent_architecture.infra.storage import CodecError
+from agent_architecture.infra.storage.codec import (
     decode,
     dump_entry,
     dump_meta,
@@ -17,6 +16,7 @@ from yzy_agent.infra.storage.codec import (
     load_entry,
     load_meta,
 )
+from fakes import make_entry, make_session_meta, user_message
 
 
 def test_enums_are_encoded_as_their_value() -> None:

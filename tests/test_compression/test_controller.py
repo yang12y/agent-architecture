@@ -6,6 +6,19 @@ import json
 
 import pytest
 
+from agent_architecture.contracts import (
+    Compaction,
+    ContextOverflowError,
+    LlmBeforePayload,
+    Message,
+    SessionEntryType,
+    Site,
+    TextPart,
+    ToolCallPart,
+)
+from agent_architecture.infra.system import HeuristicTokenCounter
+from agent_architecture.modules.compression import compact_at_llm_before, shrink
+from agent_architecture.modules.session import Session
 from fakes import (
     START,
     ScriptedLlm,
@@ -20,19 +33,6 @@ from fakes import (
     tool_message,
     user_message,
 )
-from yzy_agent.contracts import (
-    Compaction,
-    ContextOverflowError,
-    LlmBeforePayload,
-    Message,
-    SessionEntryType,
-    Site,
-    TextPart,
-    ToolCallPart,
-)
-from yzy_agent.infra.system import HeuristicTokenCounter
-from yzy_agent.modules.compression import compact_at_llm_before, shrink
-from yzy_agent.modules.session import Session
 
 # 一份工具 schema。它不是 messages 的一部分，重数一遍 messages 数不到它。
 #

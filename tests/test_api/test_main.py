@@ -1,6 +1,6 @@
 """ASGI 入口的测试。
 
-它是全项目**唯一**在模块级建 `app` 的地方 —— 少了它，`uvicorn yzy_agent.api.main:app` 起不来。
+它是全项目**唯一**在模块级建 `app` 的地方 —— 少了它，`uvicorn agent_architecture.api.main:app` 起不来。
 """
 
 from __future__ import annotations
@@ -21,6 +21,6 @@ def test_the_entry_point_builds_an_app(monkeypatch: pytest.MonkeyPatch, tmp_path
     monkeypatch.setenv("YZY_WORKSPACE", str(tmp_path))
     monkeypatch.setenv("YZY_SESSION_DIR", str(tmp_path / "sessions"))
 
-    module = importlib.import_module("yzy_agent.api.main")
+    module = importlib.import_module("agent_architecture.api.main")
 
-    assert module.app.title == "yzy-agent"
+    assert module.app.title == "agent-architecture"

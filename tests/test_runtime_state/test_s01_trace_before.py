@@ -4,14 +4,7 @@ from __future__ import annotations
 
 from collections import deque
 
-from fakes import (
-    StubSession,
-    make_frozen_config,
-    make_runtime_state,
-    make_site_context,
-    make_trace_context,
-)
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     Message,
     MessageRole,
     Permission,
@@ -20,7 +13,14 @@ from yzy_agent.contracts import (
     TraceBeforePayload,
     TraceTrigger,
 )
-from yzy_agent.modules.runtime_state import s01_trace_before
+from agent_architecture.modules.runtime_state import s01_trace_before
+from fakes import (
+    StubSession,
+    make_frozen_config,
+    make_runtime_state,
+    make_site_context,
+    make_trace_context,
+)
 
 
 def _payload(**overrides: object) -> TraceBeforePayload:

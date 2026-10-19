@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 
 import pytest
-
 from smalllog import LogWriter
 from smalllog.reader import read_from_offset
 

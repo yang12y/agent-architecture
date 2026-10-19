@@ -7,9 +7,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from agent_architecture.contracts import Permission, SideEffect, ToolDecision
+from agent_architecture.modules.sandbox import Verdict, decide, strictest
 from fakes import make_tool_declaration
-from yzy_agent.contracts import Permission, SideEffect, ToolDecision
-from yzy_agent.modules.sandbox import Verdict, decide, strictest
 
 
 def _write(required: Permission = Permission.EDITABLE):

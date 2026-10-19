@@ -1,5 +1,5 @@
 [project]
-name = "yzy-agent"
+name = "agent-architecture"
 version = "0.1.0"
 description = "通用 Agent 后端：九维度模块化架构，HTTP + SSE"
 readme = "README.md"

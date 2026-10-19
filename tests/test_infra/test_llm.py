@@ -17,8 +17,7 @@ from openai import (
     RateLimitError,
 )
 
-from fakes import REQUEST, FakeOpenAiSdk, chunk, http_response
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     ConfigError,
     ContextOverflowError,
     ImagePart,
@@ -33,7 +32,7 @@ from yzy_agent.contracts import (
     ThinkingPart,
     ToolCallPart,
 )
-from yzy_agent.infra.llm import (
+from agent_architecture.infra.llm import (
     OpenAiCompatibleClient,
     build_openai_client,
     build_payload,
@@ -42,6 +41,7 @@ from yzy_agent.infra.llm import (
     to_openai_messages,
     translate_error,
 )
+from fakes import REQUEST, FakeOpenAiSdk, chunk, http_response
 
 # ---------------------------------------------------------------------------
 # 纯函数：Message -> OpenAI 结构
@@ -371,7 +371,7 @@ def test_finish_reason_mapping_covers_sdk_values() -> None:
 
     兜底是给"厂商以后加新值"准备的，不该被已知取值走到。
     """
-    from yzy_agent.infra.llm import FINISH_REASON_TO_STOP
+    from agent_architecture.infra.llm import FINISH_REASON_TO_STOP
 
     assert {"stop", "length", "tool_calls", "content_filter", "function_call"} <= set(
         FINISH_REASON_TO_STOP
@@ -429,7 +429,7 @@ async def test_a_stream_that_dies_midway_still_translates() -> None:
 
 def test_build_openai_client_requires_api_key() -> None:
     """没配密钥要在建客户端时就报错，而不是等第一次请求才失败。"""
-    from yzy_agent.infra.config import load_app_config
+    from agent_architecture.infra.config import load_app_config
 
     config = load_app_config({})
 
@@ -439,7 +439,7 @@ def test_build_openai_client_requires_api_key() -> None:
 
 def test_build_openai_client_passes_config_through() -> None:
     """配了密钥就能建出客户端，且不把密钥写进任何日志字段。"""
-    from yzy_agent.infra.config import load_app_config
+    from agent_architecture.infra.config import load_app_config
 
     config = load_app_config(
         {"YZY_LLM_API_KEY": "sk-test", "YZY_LLM_BASE_URL": "https://example.com/v1"}

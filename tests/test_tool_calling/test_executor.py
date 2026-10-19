@@ -6,10 +6,10 @@ import asyncio
 
 import pytest
 
+from agent_architecture.contracts import CancelToken, JsonValue, SiteAbort, ToolArgumentError
+from agent_architecture.infra.observability import RecordingLogger
+from agent_architecture.modules.tool_calling import Tool, ToolContext, run
 from fakes import make_tool_declaration
-from yzy_agent.contracts import CancelToken, JsonValue, SiteAbort, ToolArgumentError
-from yzy_agent.infra.observability import RecordingLogger
-from yzy_agent.modules.tool_calling import Tool, ToolContext, run
 
 
 def _tool(fn, *, name: str = "read") -> Tool:

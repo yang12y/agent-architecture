@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from agent_architecture.contracts import MessageRole, SessionEntryType, SideEffect, TraceStatus
+from agent_architecture.infra.storage import FileSessionStore
+from agent_architecture.modules.checkpoint import Checkpoint, TailKind, classify_tail
+from agent_architecture.modules.checkpoint import apply as apply_recovery
+from agent_architecture.modules.session import Session
 from fakes import (
     START,
     USER,
@@ -13,11 +18,6 @@ from fakes import (
     make_tool_declaration,
 )
 from test_checkpoint.traces import TRACE_ID, broken_log
-from yzy_agent.contracts import MessageRole, SessionEntryType, SideEffect, TraceStatus
-from yzy_agent.infra.storage import FileSessionStore
-from yzy_agent.modules.checkpoint import Checkpoint, TailKind, classify_tail
-from yzy_agent.modules.checkpoint import apply as apply_recovery
-from yzy_agent.modules.session import Session
 
 SESSION_ID = "sess_ab12"
 

@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import Message, TextPart, ToolCallPart
+from agent_architecture.infra.system import HeuristicTokenCounter
+from agent_architecture.modules.compression import over_budget, shrink
 from fakes import assistant_message, tool_message, user_message
-from yzy_agent.contracts import Message, TextPart, ToolCallPart
-from yzy_agent.infra.system import HeuristicTokenCounter
-from yzy_agent.modules.compression import over_budget, shrink
 
 # 一个"很长"的工具结果。
 #

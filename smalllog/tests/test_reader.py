@@ -4,7 +4,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-
 from smalllog import LogWriter
 from smalllog.reader import LogReader, read_from_offset, read_time_range
 

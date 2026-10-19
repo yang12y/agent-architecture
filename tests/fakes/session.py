@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     CompactionEntryPayload,
     Draft,
     DraftSlot,

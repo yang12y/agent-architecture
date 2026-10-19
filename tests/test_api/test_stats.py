@@ -5,9 +5,8 @@
 
 from __future__ import annotations
 
-from fakes.session import make_entry
-from yzy_agent.api.stats import session_stats
-from yzy_agent.contracts import (
+from agent_architecture.api.stats import session_stats
+from agent_architecture.contracts import (
     BudgetSnapshot,
     CompactionSnapshot,
     Permission,
@@ -16,6 +15,7 @@ from yzy_agent.contracts import (
     TraceStatus,
     TraceTrigger,
 )
+from fakes.session import make_entry
 
 
 def _started() -> TraceStartEntryPayload:

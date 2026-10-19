@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import Site, ToolStat, TurnBeforePayload
+from agent_architecture.modules.runtime_state import s02_turn_before
 from fakes import make_runtime_state, make_site_context, make_trace_context
-from yzy_agent.contracts import Site, ToolStat, TurnBeforePayload
-from yzy_agent.modules.runtime_state import s02_turn_before
 
 
 def test_attempt_counter_is_reset() -> None:

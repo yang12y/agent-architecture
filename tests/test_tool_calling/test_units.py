@@ -4,8 +4,14 @@ from __future__ import annotations
 
 import pytest
 
+from agent_architecture.modules.tool_calling import (
+    ToolCatalog,
+    normalize,
+    truncate,
+    validate,
+    with_defaults,
+)
 from fakes import make_tool_declaration
-from yzy_agent.modules.tool_calling import ToolCatalog, normalize, truncate, validate, with_defaults
 
 # 一个有必填、有缺省、有类型的声明。
 #

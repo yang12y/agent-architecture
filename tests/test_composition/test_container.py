@@ -4,9 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from fakes import USER, ScriptedLlm, make_app_config, text_turn, user_message
-from yzy_agent.composition import Container, build_container
-from yzy_agent.contracts import (
+from agent_architecture.composition import Container, build_container
+from agent_architecture.contracts import (
     AssistantDelta,
     AssistantMessage,
     MessageRole,
@@ -17,7 +16,8 @@ from yzy_agent.contracts import (
     TraceStatus,
     TurnStart,
 )
-from yzy_agent.infra.storage import FileSessionStore
+from agent_architecture.infra.storage import FileSessionStore
+from fakes import USER, ScriptedLlm, make_app_config, text_turn, user_message
 
 
 def _build(scratch_dir: Path, llm=None) -> Container:

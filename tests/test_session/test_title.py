@@ -5,14 +5,7 @@
 
 from __future__ import annotations
 
-from fakes import (
-    SequentialIds,
-    make_session_meta,
-    make_site_context,
-    make_trace_context,
-    user_message,
-)
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     Handler,
     Message,
     MessageRole,
@@ -23,11 +16,18 @@ from yzy_agent.contracts import (
     TraceBeforePayload,
     TraceTrigger,
 )
-from yzy_agent.modules.session import (
+from agent_architecture.modules.session import (
     TITLE_MAX_CHARS,
     Session,
     build_handlers,
     title_from,
+)
+from fakes import (
+    SequentialIds,
+    make_session_meta,
+    make_site_context,
+    make_trace_context,
+    user_message,
 )
 
 

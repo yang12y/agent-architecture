@@ -1,4 +1,4 @@
-# yzy-agent 架构设计
+# agent-architecture 架构设计
 
 > 上游依据：`Agent通用架构.md`（十位点 / 九维度 / Runtime State / Session / 压缩 / Checkpoint / Hook / 沙箱 / 草稿槽）
 > **内容约束**：只记录**已经确定且正确**的设计，且**只写"做什么"，不写"为什么"** —— 决策理由属于代码注释。
@@ -68,7 +68,7 @@ class ToolCallStatus(StrEnum):
 
 **结构放契约，算法放模块。** `contracts/` 只放数据与 Protocol，不放行为。所以 `RuntimeState`、`SessionEntry` 的定义在 `contracts/models.py`，`modules/runtime_state/` 与 `modules/session/` 只放算法。
 
-**import 约定**：模块内部文件用相对 import；跨层只允许 `from yzy_agent.contracts import ...`，不深层导入。
+**import 约定**：模块内部文件用相对 import；跨层只允许 `from agent_architecture.contracts import ...`，不深层导入。
 
 ---
 
@@ -206,12 +206,12 @@ class ToolCallStatus(StrEnum):
 | R3 | 维度模块与 infra 之间**禁止互相 import**；`infra` 实现 `contracts` 端口，由 composition 注入 |
 | R4 | `agent_loop` 只依赖 `contracts`，不认识任何具体维度 |
 | R5 | `composition` 之外任何地方不得出现跨层 import |
-| R6 | 对外只暴露包根 `__init__.py`；禁止深层 import（`from yzy_agent.modules.session.log import ...`） |
+| R6 | 对外只暴露包根 `__init__.py`；禁止深层 import（`from agent_architecture.modules.session.log import ...`） |
 
 ### 3.2 目录架构
 
 ```text
-yzy-agent/
+agent-architecture/
 ├── pyproject.toml
 ├── README.md
 ├── .env.example
@@ -219,7 +219,7 @@ yzy-agent/
 │   ├── ARCHITECTURE.md                     # 本文档
 │   └── HANDLERS.md                         # 全部 handler 的位点 × 优先级一览
 ├── src/
-│   └── yzy_agent/
+│   └── agent_architecture/
 │       ├── __init__.py
 │       │
 │       ├── contracts/                      # L0 共享契约【已完成】
@@ -1461,7 +1461,7 @@ hub 订阅一次，按 `session_id` 分发给看着该会话的流。别的层�
 | 4 | **审批端点** ✅ `GET /approvals` + 回执；`infra/approvals/gate.py` 提供 `ApprovalProvider` 的进程内实现 | 四步全完成 |
 
 **入口**：`api/main.py` 是全项目唯一在模块级建 `app` 的地方（`app = create_app(build_container())`），
-启动命令 `uv run uvicorn yzy_agent.api.main:app`。装配根只在这里调一次 —— 配置错（缺密钥、阈值矛盾）当场就炸。
+启动命令 `uv run uvicorn agent_architecture.api.main:app`。装配根只在这里调一次 —— 配置错（缺密钥、阈值矛盾）当场就炸。
 
 ---
 
@@ -1469,7 +1469,7 @@ hub 订阅一次，按 `session_id` 分发给看着该会话的流。别的层�
 
 ### 8.1 目录约定
 
-- **一个模块一个测试目录**：`tests/test_<module>/`，与 `src/yzy_agent/modules/<module>/` 一一对应；非维度层也各有目录（`test_contracts/`、`test_infra/`、`test_api/`）。
+- **一个模块一个测试目录**：`tests/test_<module>/`，与 `src/agent_architecture/modules/<module>/` 一一对应；非维度层也各有目录（`test_contracts/`、`test_infra/`、`test_api/`）。
 - `tests/fakes/`：所有假实现与工厂，跨模块复用，行为完全确定（无真实时钟、无随机、无网络）。已落地 `FakeClock`、`SequentialIds`、`StubSession`、`RecordingHandler`/`HandlerSpy`、`make_ports`/`make_frozen_config`/`make_runtime_state`/`make_trace_context`、`ScriptedLlm`（按脚本吐契约分片）、`FakeOpenAiSdk`（假 SDK 传输层，配真客户端用）；后续模块按需补 `FakeApprover`、`FakeExecutor`。
 - `tests/conftest.py`：**全项目只有这一个 conftest**，只放全局 fixture；各模块目录不再放 conftest，避免 fixture 来源分散。
 - `tests/test_integration/`：跨模块集成。现在跑的是「**真客户端接进循环**」：整条链路用 `OpenAiCompatibleClient`，只把网络那层换成 `fakes.FakeOpenAiSdk`，验证内核真的调到了它、收流真的落进日志、每种失败真的按种类收尾。
@@ -1548,7 +1548,7 @@ addopts = "-p no:cacheprovider"   # 见下方说明
 | sandbox | **审批弹窗上的 × 由谁定义**：系统层只认「有没有回执、回执是什么」，判不出「×」是什么意思。所以必须由前端明确表态（关框时照样发 `{"decision": "deny"}`），后端不做推断 |
 | sandbox | **挂起的审批没人答就卡住整个会话**（已决定不加兜底，但后果要记住）：人一直不点 → `await approvals.request(...)` 永远不返回 → 那次 trace 不收尾 → `is_running` 保持 true → 这个会话发新消息一律 409。`GET /approvals` + 回执现在给了**重连之后把它找出来答掉**的路，但"这次根本没人来"仍然无解。而且 **`/interrupt` 也解不开**：内核的三个安全点（每轮开头、收流分片、每条工具调用之前）都在这个 await 之外，`signal.set()` 没有人在听。唯一出路是进程重启 → 落盘日志没有 `trace_end` → 走 checkpoint 恢复。真要治，兜底该放在**连接层**（流断开时取消那次请求挂起的审批），不是在沙箱里加超时 |
 | infra/llm | **图片不计入 token 估算**：`HeuristicTokenCounter` 只算文本与工具调用的参数，`ImagePart` 一个 token 都不算，带图的会话会低估到被模型挡回来。要么按 base64 长度折算，要么每张图记一个固定值 |
-| api | **装成 wheel 时没有前端**：`src/web/` 在包外面，`uv build` 不会带它，`_mount_web` 会静默跳过 —— 那种部署只提供 API。要带上，得把它挪进 `yzy_agent/web/`，或者单独发一份静态产物 |
+| api | **装成 wheel 时没有前端**：`src/web/` 在包外面，`uv build` 不会带它，`_mount_web` 会静默跳过 —— 那种部署只提供 API。要带上，得把它挪进 `agent_architecture/web/`，或者单独发一份静态产物 |
 | api | 鉴权：`user_id` 目前是**调用方自报的**，只做分类不做隔离 —— 谁都能填别人的 id。对外服务前要有服务端推导 user_id 的路径（凭证/网关头）
 | api | 会话列表的默认排序与分页 |
 | api | **慢客户端**：每条流的写队列上限 512 帧，满了发一帧 `stream_overflowed` 收尾，客户端重连全量重拉（§7.6）。还没在真实网络下验证过这个阈值 |

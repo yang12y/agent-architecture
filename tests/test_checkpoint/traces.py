@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
-from fakes import assistant_message, make_entry, tool_message, user_message
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     BudgetSnapshot,
     CompactionSnapshot,
     Permission,
@@ -16,6 +15,7 @@ from yzy_agent.contracts import (
     TraceStatus,
     TraceTrigger,
 )
+from fakes import assistant_message, make_entry, tool_message, user_message
 
 # 出事的 trace。配平出来的条目都该算在它名下。
 #

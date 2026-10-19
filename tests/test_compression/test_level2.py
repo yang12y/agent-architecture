@@ -4,15 +4,15 @@ from __future__ import annotations
 
 from typing import cast
 
-from fakes import START, ScriptedLlm, SequentialIds, make_session_meta, text_turn, user_message
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     CompactionEntryPayload,
     Message,
     SessionEntryType,
     TextPart,
 )
-from yzy_agent.modules.compression import compact
-from yzy_agent.modules.session import SUMMARY_PREFIX, Session
+from agent_architecture.modules.compression import compact
+from agent_architecture.modules.session import SUMMARY_PREFIX, Session
+from fakes import START, ScriptedLlm, SequentialIds, make_session_meta, text_turn, user_message
 
 
 def _session(count: int) -> Session:

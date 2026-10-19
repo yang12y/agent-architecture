@@ -4,6 +4,24 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from agent_architecture.contracts import (
+    LlmAfterPayload,
+    Permission,
+    Site,
+    TraceBeforePayload,
+    TraceStatus,
+    TraceTrigger,
+)
+from agent_architecture.infra.storage import FileSessionStore
+from agent_architecture.modules.agent_loop import HandlerRegistry
+from agent_architecture.modules.checkpoint import (
+    Checkpoint,
+    TailKind,
+    build_handlers,
+    classify_tail,
+)
+from agent_architecture.modules.checkpoint.barriers import BARRIER_SITES
+from agent_architecture.modules.session import Session
 from fakes import (
     USER,
     SequentialIds,
@@ -14,19 +32,6 @@ from fakes import (
     user_message,
 )
 from test_checkpoint.traces import broken_log
-from yzy_agent.contracts import (
-    LlmAfterPayload,
-    Permission,
-    Site,
-    TraceBeforePayload,
-    TraceStatus,
-    TraceTrigger,
-)
-from yzy_agent.infra.storage import FileSessionStore
-from yzy_agent.modules.agent_loop import HandlerRegistry
-from yzy_agent.modules.checkpoint import Checkpoint, TailKind, build_handlers, classify_tail
-from yzy_agent.modules.checkpoint.barriers import BARRIER_SITES
-from yzy_agent.modules.session import Session
 
 SESSION_ID = "sess_ab12"
 

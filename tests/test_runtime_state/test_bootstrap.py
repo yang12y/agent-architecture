@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
+from agent_architecture.contracts import Message, MessageRole, Permission, TextPart
+from agent_architecture.modules.runtime_state import bootstrap_runtime_state
 from fakes import make_frozen_config
-from yzy_agent.contracts import Message, MessageRole, Permission, TextPart
-from yzy_agent.modules.runtime_state import bootstrap_runtime_state
 
 # 固定的起始时刻，让断言可以写死。
 STARTED = datetime(2025, 1, 1, 12, 0, tzinfo=UTC)

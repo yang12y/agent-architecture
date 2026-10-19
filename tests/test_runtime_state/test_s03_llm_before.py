@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from fakes import StubSession, make_site_context, make_trace_context
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     LlmBeforePayload,
     Message,
     MessageRole,
@@ -11,7 +10,8 @@ from yzy_agent.contracts import (
     TextPart,
     TokenAnchor,
 )
-from yzy_agent.modules.runtime_state import s03_llm_before
+from agent_architecture.modules.runtime_state import s03_llm_before
+from fakes import StubSession, make_site_context, make_trace_context
 
 
 def _payload(

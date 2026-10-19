@@ -4,7 +4,6 @@ import json
 from datetime import UTC, datetime, timedelta, timezone
 
 import pytest
-
 from smalllog.codec import (
     decode_line,
     encode_line,

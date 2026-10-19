@@ -13,7 +13,7 @@ from __future__ import annotations
 import asyncio
 import sys
 
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     AgentError,
     ConfigError,
     LlmChunkKind,
@@ -22,8 +22,8 @@ from yzy_agent.contracts import (
     MessageRole,
     TextPart,
 )
-from yzy_agent.infra.config import load_app_config
-from yzy_agent.infra.llm import build_openai_client
+from agent_architecture.infra.config import load_app_config
+from agent_architecture.infra.llm import build_openai_client
 
 
 async def main() -> int:

@@ -7,8 +7,8 @@ from __future__ import annotations
 
 import asyncio
 
-from yzy_agent.contracts import ApprovalDecision, ApprovalRequest, ApprovalResult
-from yzy_agent.infra.approvals import ApprovalGate
+from agent_architecture.contracts import ApprovalDecision, ApprovalRequest, ApprovalResult
+from agent_architecture.infra.approvals import ApprovalGate
 
 
 def _request(request_id: str = "appr_1", session_id: str = "sess_1") -> ApprovalRequest:

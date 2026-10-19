@@ -10,9 +10,8 @@ from __future__ import annotations
 import asyncio
 from pathlib import Path
 
-from fakes import USER, ScriptedLlm, make_app_config, text_turn, tool_turn, user_message
-from yzy_agent.composition import Container, build_container
-from yzy_agent.contracts import (
+from agent_architecture.composition import Container, build_container
+from agent_architecture.contracts import (
     ApprovalDecision,
     ApprovalRequest,
     ApprovalResult,
@@ -21,6 +20,7 @@ from yzy_agent.contracts import (
     SessionEntryType,
     TraceStatus,
 )
+from fakes import USER, ScriptedLlm, make_app_config, text_turn, tool_turn, user_message
 
 
 def _container(

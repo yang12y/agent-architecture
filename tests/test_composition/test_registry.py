@@ -7,6 +7,10 @@ from pathlib import Path
 
 import pytest
 
+from agent_architecture.composition import SessionRegistry
+from agent_architecture.contracts import CancelToken, SessionStatus
+from agent_architecture.infra.storage import FileSessionStore
+from agent_architecture.modules.session import Session
 from fakes import (
     USER,
     FakeClock,
@@ -16,10 +20,6 @@ from fakes import (
     make_session_meta,
     user_message,
 )
-from yzy_agent.composition import SessionRegistry
-from yzy_agent.contracts import CancelToken, SessionStatus
-from yzy_agent.infra.storage import FileSessionStore
-from yzy_agent.modules.session import Session
 
 
 def _registry(scratch_dir: Path, store=None) -> SessionRegistry:

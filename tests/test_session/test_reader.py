@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import CompactionEntryPayload, SessionEntryType
+from agent_architecture.modules.session import SessionReader, project
 from fakes import assistant_message, make_entry, tool_message, user_message
-from yzy_agent.contracts import CompactionEntryPayload, SessionEntryType
-from yzy_agent.modules.session import SessionReader, project
 
 
 def _entries():
@@ -58,7 +58,7 @@ def test_last_seq_of_an_empty_log_is_zero() -> None:
 
 def test_is_closed_looks_only_at_the_tail() -> None:
     """判断"上次收尾干不干净"只看最后一条是不是 trace_end。"""
-    from yzy_agent.contracts import TraceEndEntryPayload, TraceStatus
+    from agent_architecture.contracts import TraceEndEntryPayload, TraceStatus
 
     open_log = _entries()
     closed_log = [

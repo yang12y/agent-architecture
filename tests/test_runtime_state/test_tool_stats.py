@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import ToolStat
+from agent_architecture.modules.runtime_state import record_failure, record_success
 from fakes import make_runtime_state
-from yzy_agent.contracts import ToolStat
-from yzy_agent.modules.runtime_state import record_failure, record_success
 
 
 def test_first_record_creates_the_entry() -> None:

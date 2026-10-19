@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from yzy_agent.contracts import AgentError, Site, SiteContext
+from agent_architecture.contracts import AgentError, Site, SiteContext
 
 
 class RecordingHandler:

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from agent_architecture.contracts import SideEffect, ToolCall, ToolCallStatus
+from agent_architecture.modules.tool_calling import is_parallel_safe, plan_for
 from fakes import make_tool_declaration
-from yzy_agent.contracts import SideEffect, ToolCall, ToolCallStatus
-from yzy_agent.modules.tool_calling import is_parallel_safe, plan_for
 
 # 一张最小的表：read 只读，write 会改。
 #

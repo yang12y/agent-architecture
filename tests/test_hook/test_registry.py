@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from yzy_agent.modules.hook import HookRegistry, HookSource, events
+from agent_architecture.modules.hook import HookRegistry, HookSource, events
 
 
 async def _audit(ctx) -> None: ...
@@ -49,7 +49,7 @@ def test_an_unknown_event_is_rejected_at_registration() -> None:
 
 def test_every_site_has_an_event_name() -> None:
     """十位点一个不落 —— 挂载点就是位点，少一个就等于那个位点挂不上 hook。"""
-    from yzy_agent.contracts import Site
+    from agent_architecture.contracts import Site
 
     assert set(events.SITE_EVENT) == set(Site)
 

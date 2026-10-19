@@ -4,17 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from fakes import (
-    FakeApprovals,
-    FakeToolRegistry,
-    StubSession,
-    make_frozen_config,
-    make_ports,
-    make_site_context,
-    make_tool_declaration,
-    make_trace_context,
-)
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     ApprovalDecision,
     ApprovalRequired,
     Permission,
@@ -25,8 +15,18 @@ from yzy_agent.contracts import (
     ToolCallStatus,
     ToolDecision,
 )
-from yzy_agent.infra.observability import InProcessEventBus, RecordingLogger
-from yzy_agent.modules.sandbox import enforce
+from agent_architecture.infra.observability import InProcessEventBus, RecordingLogger
+from agent_architecture.modules.sandbox import enforce
+from fakes import (
+    FakeApprovals,
+    FakeToolRegistry,
+    StubSession,
+    make_frozen_config,
+    make_ports,
+    make_site_context,
+    make_tool_declaration,
+    make_trace_context,
+)
 
 
 def _write():

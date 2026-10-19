@@ -18,15 +18,15 @@ from pathlib import Path
 
 import pytest
 
-from yzy_agent.contracts import (
+from agent_architecture.contracts import (
     CancelToken,
     Permission,
     SideEffect,
     ToolArgumentError,
     ToolDeclaration,
 )
-from yzy_agent.infra.observability import RecordingLogger
-from yzy_agent.modules.tool_calling.builtin import (
+from agent_architecture.infra.observability import RecordingLogger
+from agent_architecture.modules.tool_calling.builtin import (
     RUN_COMMAND,
     build_catalog,
     edit,
@@ -37,7 +37,7 @@ from yzy_agent.modules.tool_calling.builtin import (
     run_command,
     write,
 )
-from yzy_agent.modules.tool_calling.registry import ToolContext
+from agent_architecture.modules.tool_calling.registry import ToolContext
 
 # 每个工具该有的静态事实：最低权限档位 + 副作用等级。
 #
@@ -350,7 +350,7 @@ async def test_glob_caps_the_listing(scratch_dir: Path, monkeypatch: pytest.Monk
 
     上限要 monkeypatch 到很小：真造 200 个文件只为验一句提示，不值当。
     """
-    module = importlib.import_module("yzy_agent.modules.tool_calling.builtin.glob")
+    module = importlib.import_module("agent_architecture.modules.tool_calling.builtin.glob")
     monkeypatch.setattr(module, "MAX_MATCHES", 1)
     (scratch_dir / "a.py").write_text("", encoding="utf-8")
     (scratch_dir / "b.py").write_text("", encoding="utf-8")
@@ -413,7 +413,7 @@ async def test_grep_refuses_a_bad_regex(scratch_dir: Path) -> None:
 
 async def test_grep_caps_the_hits(scratch_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """超过上限只列前几处，并说明还有更多。"""
-    module = importlib.import_module("yzy_agent.modules.tool_calling.builtin.grep")
+    module = importlib.import_module("agent_architecture.modules.tool_calling.builtin.grep")
     monkeypatch.setattr(module, "MAX_MATCHES", 1)
     (scratch_dir / "a.py").write_text("hit\nhit\n", encoding="utf-8")
 
@@ -426,7 +426,7 @@ async def test_grep_skips_files_that_are_too_big(
     scratch_dir: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """超大文件直接跳过：真去读依赖目录里那些几 MB 的文件，一次调用能跑到超时。"""
-    module = importlib.import_module("yzy_agent.modules.tool_calling.builtin.grep")
+    module = importlib.import_module("agent_architecture.modules.tool_calling.builtin.grep")
     monkeypatch.setattr(module, "MAX_FILE_BYTES", 4)
     (scratch_dir / "big.py").write_text("hit\nhit\n", encoding="utf-8")
 
