@@ -16,7 +16,7 @@ L3 装配层：全系统唯一知道有哪些具体实现的地方，把配置�
 
 - **本模块调用** 全部 `infra/*`：`load_app_config`、`FileSessionStore`、`build_openai_client`、`ApprovalGate`、`InProcessEventBus` / `StdLogger`、`SystemClock` / `UuidGenerator` / `HeuristicTokenCounter`。
 - **本模块调用** `modules/agent_loop`：`Agent`（门面）、`HandlerRegistry` 与 `SitePipeline`（装 handler 的容器）。
-- **本模块调用** 七个维度模块的装配入口：`session.Session`、`tool_calling.build_catalog`、各模块的 `build_handlers` / `Checkpoint` / `bootstrap_runtime_state`。
+- **本模块调用** 七个维度模块与 `prompts` 的装配入口：`session.Session`、`tool_calling.build_catalog`、各模块的 `build_handlers` / `Checkpoint` / `bootstrap_runtime_state`。
 - **本模块调用** `contracts`：`Ports` 与各端口协议，用来约束上面这些实现。
 - **被调用**：`api` 用 `build_container` 建唯一实例，用 `Container` / `LiveSession` 取能力。
 - 反向没有：其它模块都不 import `composition`，它只向下装配。

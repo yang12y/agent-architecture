@@ -189,6 +189,20 @@ async def test_it_falls_through_to_level2() -> None:
     assert "前面聊了六句" in _text(payload.messages[0])
 
 
+async def test_a_rebuilt_context_still_counts_the_system_prompt() -> None:
+    """二级整份换掉 messages 之后，系统提示词那几 token 要补回去 —— 它不在 messages 里。"""
+    session = _session(6, body="x" * 1000)
+    llm = ScriptedLlm([text_turn("前面聊了六句")])
+    payload = _before(session, compact_tokens=800)
+    payload.system_prompt = "你是 agent-architecture"
+    payload.system_tokens = 12
+
+    await compact_at_llm_before(_ctx(Site.LLM_BEFORE, payload, session, llm))
+
+    expected = HeuristicTokenCounter().count_messages(payload.messages) + 12
+    assert payload.context_tokens == expected
+
+
 async def test_long_results_in_the_kept_window_are_still_shrunk() -> None:
     """二级之后要再补一次一级 —— 保留窗口里那几条长工具结果不能原样带全文进门。"""
     session = _session(4, body="x" * 4000)

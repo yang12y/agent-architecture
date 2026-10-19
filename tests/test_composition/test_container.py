@@ -30,10 +30,10 @@ def _build(scratch_dir: Path, llm=None) -> Container:
 
 
 def test_container_wires_every_handler(scratch_dir: Path) -> None:
-    """runtime_state 九 + session 六 + compression 一 + tool_calling 五 + hook 一 + 沙箱一 + checkpoint 六。"""
+    """runtime_state 九 + session 六 + compression 一 + tool_calling 五 + hook 一 + 沙箱一 + checkpoint 六 + prompts 一。"""
     container = _build(scratch_dir)
 
-    assert len(container.pipeline.registry.handlers()) == 29
+    assert len(container.pipeline.registry.handlers()) == 30
 
 
 def test_checkpoint_covers_every_barrier_site(scratch_dir: Path) -> None:
@@ -185,7 +185,7 @@ async def test_the_model_actually_sees_the_user_message(scratch_dir: Path) -> No
     await container.agent.run(session=live.session, user_message=user_message("在吗"))
 
     sent = llm.requests[0].messages
-    assert [message.role for message in sent] == [MessageRole.USER]
+    assert [message.role for message in sent] == [MessageRole.SYSTEM, MessageRole.USER]
 
 
 async def test_the_second_turn_sees_the_first_answer(scratch_dir: Path) -> None:
@@ -198,6 +198,7 @@ async def test_the_second_turn_sees_the_first_answer(scratch_dir: Path) -> None:
     await container.agent.run(session=live.session, user_message=user_message("再说一次"))
 
     assert [message.role for message in llm.requests[1].messages] == [
+        MessageRole.SYSTEM,
         MessageRole.USER,
         MessageRole.ASSISTANT,
         MessageRole.USER,

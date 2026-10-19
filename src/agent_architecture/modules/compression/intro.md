@@ -21,6 +21,7 @@ D5 压缩：上下文触达阈值时做两级压缩 —— 先把长工具结果
 
 - **本模块调用** `contracts`：`LlmBeforePayload`、`TokenCounter`、`LlmClient`、`CompactionEntryPayload`、`ContextOverflowError` 等。
 - **本模块改 `payload.messages` 与 `payload.schema_tokens`**：位点 3 之后的 handler 与主循环看到的就是压过的上下文（schema 那部分由 `modules/tool_calling` 在同一个位点填入）。
+- **二级重建只重算 session 那一份**：系统提示词不在 `payload.messages` 里（`modules/prompts` 把它放进单独字段），所以重建时不会被压缩改写；重建后把它的 token 与 schema 的 token 一起补回总数。
 - **本模块调用** `ctx.ports.tokens`（`infra/system` 实现）算占用，用注入的 `LlmClient`（`infra/llm` 实现）做二级摘要。
 - **本模块经 `ctx.session`**（`modules/session`）追加 compaction 条目，并发 `Compaction` 事件给事件总线。
 - **被调用**：`composition` 把 `handler.build_handlers` 的结果连同 `LlmClient`、`TokenCounter` 一起注入，注册到位点 3。

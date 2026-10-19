@@ -55,6 +55,15 @@ def test_user_message_becomes_plain_text() -> None:
     assert to_openai_messages([message]) == [{"role": "user", "content": "帮我读 a.py"}]
 
 
+def test_system_message_keeps_its_own_role() -> None:
+    """系统提示词翻成 {"role": "system", ...} —— 翻译层对未知角色按纯文本处理，不用为它特判。"""
+    message = Message(role=MessageRole.SYSTEM, content=[TextPart(text="你是 agent-architecture")])
+
+    assert to_openai_messages([message]) == [
+        {"role": "system", "content": "你是 agent-architecture"}
+    ]
+
+
 def test_assistant_message_keeps_tool_calls() -> None:
     """assistant 消息里的工具调用要单独给 tool_calls 字段，参数序列化成字符串。"""
     message = Message(

@@ -187,12 +187,12 @@ class ToolCallStatus(StrEnum):
 
 ## 3. 模块划分
 
-三层结构，**九个维度模块 + 一层非维度契约 + 一层基础设施 + API 层**。
+三层结构，**九个维度模块 + 一个提示词组装件 + 一层非维度契约 + 一层基础设施 + API 层**。
 
 | 层 | 目录 | 内容 | 能否依赖别的层 |
 |---|---|---|---|
 | L0 契约 | `contracts/` | 十位点、共享模型、端口 Protocol、错误 | 零依赖，不 import 其他层 |
-| L1 维度 | `modules/*`（9 个） | 九个维度，各自实现 `SiteHandler` | 只允许依赖 L0 |
+| L1 维度 | `modules/*`（9 + 1） | 九个维度 + 位点 3 的提示词组装，各自实现 `SiteHandler` | 只允许依赖 L0 |
 | L2 基础设施 | `infra/*` | llm / storage / config / observability | 只允许依赖 L0 |
 | L3 装配 | `composition/` | 唯一装配根，实例化并注入 | 可依赖全部 |
 | L4 接入 | `api/` | FastAPI 路由、SSE、DTO | 只依赖 L3 + L0 |
@@ -202,7 +202,7 @@ class ToolCallStatus(StrEnum):
 | 规则 | 内容 |
 |---|---|
 | R1 | `contracts` 不得 import `modules` / `infra` / `composition` / `api` |
-| R2 | 九个维度模块之间**禁止互相 import**；需要时走 `contracts` 的端口 |
+| R2 | 九个维度模块与 `prompts` 之间**禁止互相 import**；需要时走 `contracts` 的端口 |
 | R3 | 维度模块与 infra 之间**禁止互相 import**；`infra` 实现 `contracts` 端口，由 composition 注入 |
 | R4 | `agent_loop` 只依赖 `contracts`，不认识任何具体维度 |
 | R5 | `composition` 之外任何地方不得出现跨层 import |
@@ -323,6 +323,10 @@ agent-architecture/
 │       │   │   ├── catalog.py              # 目录注入（持久消息、整体替换）
 │       │   │   ├── loader.py               # 正文按需加载
 │       │   │   └── handler.py
+│       │   │
+│       │   ├── prompts/                    # 非维度：位点 3 拼系统提示词【已完成】
+│       │   │   ├── prompt.py               # 五段文案 + 组装（排序、填变量、丢空段）
+│       │   │   └── handler.py              # 位点 3：写进 payload.system_prompt，**不进 messages 也不写 Session**
 │       │   │
 │       │   └── agent_loop/                 # D1【pipeline 已完成】
 │       │       ├── __init__.py
@@ -1571,3 +1575,4 @@ addopts = "-p no:cacheprovider"   # 见下方说明
 | D2 Tool Calling | `modules/tool_calling/` | `tests/test_tool_calling/` | S7【已完成】 |
 | D3 Skill | `modules/skill/` | `tests/test_skill/` | S8 |
 | D1 Agent Loop | `modules/agent_loop/` | `tests/test_agent_loop/` | S9 |
+| —（非维度） | `modules/prompts/` | `tests/test_prompts/` | 【已完成】 |

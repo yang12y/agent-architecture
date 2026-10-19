@@ -218,7 +218,8 @@ class LlmBeforePayload:
     """位点 3（llm:before）的专属数据。
 
     这个 payload 是**可写的**：压缩改的就是这里的 messages，tool_calling 填的是
-    这里的 tools_schema。改完之后内核才把这份内容发出去。
+    这里的 tools_schema，prompts 填的是这里的 system_prompt。改完之后内核才把这份内容
+    组装成请求发出去 —— 系统提示词在最前，其余按 messages 原样。
     """
 
     # 本次请求使用的模型。
@@ -236,7 +237,15 @@ class LlmBeforePayload:
     # 举例：[{"name": "read", "description": "...", "parameters": {...}}]
     tools_schema: list[dict[str, JsonValue]] = field(default_factory=list)
 
-    # 当前这份 messages 占用的 token 数。由 runtime_state 在位点 3 算出。
+    # 这次请求的系统提示词。由 prompts 在位点 3 现拼。
+    #
+    # **它不在 messages 里，也不进 Session 日志**：内核发请求时才把它放到最前面。
+    # 所以压缩（它只改 messages）碰不到它，落盘也碰不到它。
+    #
+    # 举例："你是 agent-architecture，一个用工具把任务做完的通用智能体。……"
+    system_prompt: str = ""
+
+    # 这次请求要算的 token 总数：messages + 工具 schema + 系统提示词。
     #
     # 举例：42815
     context_tokens: int = 0
@@ -246,6 +255,11 @@ class LlmBeforePayload:
     #
     # 举例：950
     schema_tokens: int = 0
+
+    # 系统提示词占的那一份，由填它的 handler 一并算好。压缩重建后同样要补回去。
+    #
+    # 举例：798
+    system_tokens: int = 0
 
     # 压缩阈值。context_tokens 达到它就触发压缩。
     #

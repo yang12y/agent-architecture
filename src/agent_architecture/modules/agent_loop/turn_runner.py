@@ -197,7 +197,7 @@ class TurnRunner:
 
         llm_request = LlmRequest(
             model=request.model,
-            messages=request.messages,
+            messages=self._request_messages(request),
             tools_schema=request.tools_schema,
             thinking=trace.config.thinking,
         )
@@ -276,6 +276,21 @@ class TurnRunner:
             stop_reason=stop_reason,
             usage=usage,
         )
+
+    def _request_messages(self, request: LlmBeforePayload) -> list[Message]:
+        """这次真正要发出去的 messages：系统提示词在最前，其余是 payload 里那份。
+
+        系统提示词**不在 payload.messages 里**（那是 Session 的投影，压缩改的就是它）。
+        放到最后一步再拼，压缩、落盘、投影都碰不到它。
+
+        举例：_request_messages(payload) -> [system_msg, user_msg, ...]
+        """
+        if not request.system_prompt:
+            return list(request.messages)
+        return [
+            Message(role=MessageRole.SYSTEM, content=[TextPart(text=request.system_prompt)]),
+            *request.messages,
+        ]
 
     async def _run_tool_batch(self, trace: TraceContext) -> None:
         """位点 6/7/8：本轮待执行的调用，先整批过位点 6，再按组过位点 7 与 8。

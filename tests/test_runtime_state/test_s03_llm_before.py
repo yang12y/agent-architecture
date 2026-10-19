@@ -75,12 +75,43 @@ def test_no_schema_adds_nothing() -> None:
     assert ctx.state.context_tokens == ctx.ports.tokens.count_messages(messages)
 
 
+def test_the_system_prompt_counts_towards_the_total() -> None:
+    """系统提示词不在 messages 里，但它是这次请求的一部分，必须计进预算。"""
+    messages = [Message(role=MessageRole.USER, content=[TextPart(text="你好")])]
+    payload = _payload(messages)
+    payload.system_prompt = "你是 agent-architecture"
+    payload.system_tokens = 8
+    ctx = make_site_context(Site.LLM_BEFORE, payload)
+
+    s03_llm_before.apply(ctx)
+
+    assert ctx.state.context_tokens == ctx.ports.tokens.count_messages(messages) + 8
+
+
 def test_a_trusted_anchor_replaces_the_estimate() -> None:
     """上一次真发出去的是这次的前缀：用提供方的真值当基数，只补算新增的那几条。"""
     sent = Message(role=MessageRole.USER, content=[TextPart(text="帮我读 a.py")])
     reply = Message(role=MessageRole.ASSISTANT, content=[TextPart(text="好的")])
     session = StubSession()
     session.set_token_anchor(TokenAnchor(messages=(sent,), input_tokens=5000, output_tokens=20))
+    ctx = make_site_context(
+        Site.LLM_BEFORE, _payload([sent, reply]), trace=make_trace_context(session=session)
+    )
+
+    s03_llm_before.apply(ctx)
+
+    assert ctx.state.context_tokens == 5000 + 20 + ctx.ports.tokens.count_messages([reply])
+
+
+def test_the_anchor_matches_though_it_begins_with_the_system_prompt() -> None:
+    """锚点里最前面那条是系统提示词（内核发请求时才放的），比对前缀时跳过它。"""
+    system = Message(role=MessageRole.SYSTEM, content=[TextPart(text="你是 agent-architecture")])
+    sent = Message(role=MessageRole.USER, content=[TextPart(text="帮我读 a.py")])
+    reply = Message(role=MessageRole.ASSISTANT, content=[TextPart(text="好的")])
+    session = StubSession()
+    session.set_token_anchor(
+        TokenAnchor(messages=(system, sent), input_tokens=5000, output_tokens=20)
+    )
     ctx = make_site_context(
         Site.LLM_BEFORE, _payload([sent, reply]), trace=make_trace_context(session=session)
     )

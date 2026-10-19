@@ -9,8 +9,9 @@
    只补算后面新加的那几条。每次成功调用都重新锚定，所以误差不跨轮累积。
 2. **全量估算** —— 没有锚点、或者上一次发出去的东西被改写过（压缩、中断）时退回这里。
 
-口径都是"整份请求"：system prompt 由 session 的投影带进来，工具 schema 由 tool_calling
-填进同一个 payload —— 两者都在这里一起算，漏掉 schema 会让阈值形同虚设。
+口径都是"整份请求"：系统提示词由 prompts 填进同一个 payload（它不在 messages 里），
+工具 schema 由 tool_calling 填进同一个 payload —— 两者都在这里一起算，
+漏掉任何一份，阈值就形同虚设。
 """
 
 from __future__ import annotations
@@ -18,7 +19,13 @@ from __future__ import annotations
 import json
 from typing import cast
 
-from agent_architecture.contracts import JsonValue, LlmBeforePayload, Message, SiteContext
+from agent_architecture.contracts import (
+    JsonValue,
+    LlmBeforePayload,
+    Message,
+    MessageRole,
+    SiteContext,
+)
 
 
 def apply(ctx: SiteContext) -> None:
@@ -34,7 +41,11 @@ def apply(ctx: SiteContext) -> None:
 
     tokens = _from_anchor(ctx, payload.messages)
     if tokens is None:
-        tokens = ctx.ports.tokens.count_messages(payload.messages) + payload.schema_tokens
+        tokens = (
+            ctx.ports.tokens.count_messages(payload.messages)
+            + payload.schema_tokens
+            + payload.system_tokens
+        )
 
     payload.context_tokens = tokens
     ctx.state.context_tokens = tokens
@@ -55,7 +66,13 @@ def _from_anchor(ctx: SiteContext, messages: list[Message]) -> int | None:
     if anchor is None:
         return None
 
-    sent = anchor.messages
+    # 上次发出去的最前面是那次现拼的系统提示词：它不在 messages 里（内核发请求时才放到最前），
+    # 所以比对前缀时把它跳过去。
+    sent = (
+        anchor.messages[1:]
+        if anchor.messages and anchor.messages[0].role is MessageRole.SYSTEM
+        else anchor.messages
+    )
     if len(messages) < len(sent) or tuple(messages[: len(sent)]) != sent:
         return None
 

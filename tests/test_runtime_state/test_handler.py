@@ -60,9 +60,9 @@ def test_trace_before_runs_after_session() -> None:
     assert _by_id()["runtime_state.trace_before"].priority > 100
 
 
-def test_llm_before_runs_first() -> None:
-    """compression 就排在后面，它要读 context_tokens，所以这里必须最先跑。"""
-    assert _by_id()["runtime_state.llm_before"].priority == 100
+def test_llm_before_runs_before_compression() -> None:
+    """compression（200）就排在后面，它要读 context_tokens；110 也给 100 的提示词组装让了位。"""
+    assert _by_id()["runtime_state.llm_before"].priority == 110
 
 
 def test_tool_before_runs_after_the_decisions_are_filled() -> None:

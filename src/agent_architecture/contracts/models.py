@@ -46,6 +46,11 @@ class Permission(StrEnum):
 class MessageRole(StrEnum):
     """一条消息的发言方。"""
 
+    # 系统 —— 每次模型调用前现拼的提示词。**只出现在请求里，不写进 Session 日志。**
+    #
+    # 举例：Message(role=MessageRole.SYSTEM, content=[TextPart(text="你是 agent-architecture……")])
+    SYSTEM = "system"
+
     # 用户 —— 用户输入的消息，也可能是用户中途插话（pending_queue）。
     USER = "user"
 

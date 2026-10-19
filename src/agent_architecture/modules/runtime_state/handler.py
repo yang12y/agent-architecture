@@ -35,8 +35,11 @@ PRIORITY_AFTER_SESSION = 300
 # 位点 2/3/4/5/7 要最先跑 —— 它们产出的东西本位点后面的人要读：
 # context_tokens 给 compression，pending_tool_calls 与 pending_messages 给 session。
 #
-# 举例：100
-PRIORITY_FIRST = 100
+# 110 而不是 100：100 留给"往 payload 里填内容"的 handler（位点 3 的提示词组装）。
+# 算占用得等它们填完，否则那几个字段的 token 不进预算。
+#
+# 举例：110
+PRIORITY_FIRST = 110
 
 # 位点 6 相反：它读的是 tool_calling 与 sandbox 填好的 decisions，早一步就看不到判定结果。
 # 450 仍在维度段（100-499）内，又早于 hook（500 段）与落盘屏障（900）。

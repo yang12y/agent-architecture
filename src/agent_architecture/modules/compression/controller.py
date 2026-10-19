@@ -57,7 +57,9 @@ async def compact_at_llm_before(ctx: SiteContext) -> None:
     _record(
         ctx,
         payload,
-        count(payload.messages, tokens=ctx.ports.tokens) + payload.schema_tokens,
+        count(payload.messages, tokens=ctx.ports.tokens)
+        + payload.schema_tokens
+        + payload.system_tokens,
     )
     guard(payload.context_tokens, compact_tokens=payload.compact_tokens)
 

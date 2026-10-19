@@ -19,6 +19,7 @@ from agent_architecture.modules import checkpoint as checkpoint_module
 from agent_architecture.modules import (
     compression,
     hook,
+    prompts,
     runtime_state,
     sandbox,
     session,
@@ -114,6 +115,7 @@ def build_container(config: AppConfig | None = None, *, llm: LlmClient | None = 
     pipeline = SitePipeline(
         HandlerRegistry(
             [
+                *prompts.build_handlers(),
                 *runtime_state.build_handlers(),
                 *session.build_handlers(),
                 *compression.build_handlers(),

@@ -19,7 +19,7 @@
 | 段位 | 取值 | 谁用 |
 |---|---|---|
 | `recovery` | `50` | 恢复判据，只有 checkpoint 在位点 1 用 |
-| `dimension` | `100–499` | 九个维度模块的内置逻辑 |
+| `dimension` | `100–499` | 九个维度模块与提示词组装的内置逻辑 |
 | `hook` | `500–899` | 用户 Hook |
 | `barrier` | `900` | 落盘屏障，只有 checkpoint 用，必须最后跑 |
 
@@ -46,17 +46,18 @@
 
 | priority | 模块 | handler id | 做什么 |
 |---|---|---|---|
-| 100 | runtime_state | `runtime_state.turn_before` | 开新的一轮（`turn_index++`、重试计数归零、清本轮工具统计） |
+| 110 | runtime_state | `runtime_state.turn_before` | 开新的一轮（`turn_index++`、重试计数归零、清本轮工具统计） |
 | 500 | hook | `hook.site` | 跑用户挂在 `agent/turn_before` 上的 hook |
 
 **`llm:before`**
 
 | priority | 模块 | handler id | 做什么 |
 |---|---|---|---|
-| 100 | runtime_state | `runtime_state.llm_before` | 算这次请求实际占用多少上下文（`context_tokens`） |
+| 50 | tool_calling | `tool_calling.llm_before` | 把可见的工具 schema 填进请求 |
+| 100 | prompts | `prompts.llm_before` | 拼系统提示词写进 `payload.system_prompt`（**不进 messages，也不进 Session**） |
+| 110 | runtime_state | `runtime_state.llm_before` | 算这次请求实际占用多少上下文（`context_tokens`） |
 | 200 | compression | `compression.llm_before` | 到阈值就压：先一级占位替换，不够再二级摘要，最后守预算 |
 | 300 | session | `session.llm_before` | 取材之后清空草稿槽 |
-| 50 | tool_calling | `tool_calling.llm_before` | 把可见的工具 schema 填进请求 |
 | 500 | hook | `hook.site` | 跑用户挂在 `agent/llm_before` 上的 hook |
 | 900 | checkpoint | `checkpoint.llm_before` | **落盘屏障**：模型看到压缩后的上下文之前，条目必须已经在盘上 |
 
@@ -64,14 +65,14 @@
 
 | priority | 模块 | handler id | 做什么 |
 |---|---|---|---|
-| 100 | runtime_state | `runtime_state.llm_during` | 记下这是本 turn 的第几次尝试（`llm_attempt_number`） |
+| 110 | runtime_state | `runtime_state.llm_during` | 记下这是本 turn 的第几次尝试（`llm_attempt_number`） |
 | 500 | hook | `hook.site` | 跑用户挂在 `agent/llm_during` 上的 hook（设超时、挂取消条件的常用位置） |
 
 **`llm:after`**
 
 | priority | 模块 | handler id | 做什么 |
 |---|---|---|---|
-| 100 | runtime_state | `runtime_state.llm_after` | 收下模型这一轮的产出（`pending_tool_calls`），并消费中途消息 |
+| 110 | runtime_state | `runtime_state.llm_after` | 收下模型这一轮的产出（`pending_tool_calls`），并消费中途消息 |
 | 200 | session | `session.llm_after` | 定稿模型这一轮的输出，把中途消息落成 user 消息 |
 | 500 | hook | `hook.site` | 跑用户挂在 `agent/llm_after` 上的 hook |
 | 900 | checkpoint | `checkpoint.llm_after` | **落盘屏障** |
@@ -92,7 +93,7 @@
 
 | priority | 模块 | handler id | 做什么 |
 |---|---|---|---|
-| 100 | runtime_state | `runtime_state.tool_during` | 把这条调用标记成执行中 |
+| 110 | runtime_state | `runtime_state.tool_during` | 把这条调用标记成执行中 |
 | 100 | tool_calling | `tool_calling.tool_during` | 执行这条调用（超时 + 按规则重试），**失败收成结果而不是上抛** |
 | 500 | hook | `hook.site` | 跑用户挂在 `agent/tool_during` 上的 hook |
 
@@ -130,15 +131,16 @@
 | 模块 | handler id | 位点 | priority | 做什么 |
 |---|---|---|---|---|
 | checkpoint | `checkpoint.trace_before` | `trace:before` | 50 | 恢复判据 |
-| runtime_state | `runtime_state.llm_before` | `llm:before` | 100 | 算 `context_tokens` |
-| runtime_state | `runtime_state.llm_during` | `llm:during` | 100 | 记尝试次数 |
-| runtime_state | `runtime_state.llm_after` | `llm:after` | 100 | 解析待执行调用、消费中途消息 |
+| prompts | `prompts.llm_before` | `llm:before` | 100 | 拼系统提示词写进 payload |
+| runtime_state | `runtime_state.llm_before` | `llm:before` | 110 | 算 `context_tokens` |
+| runtime_state | `runtime_state.llm_during` | `llm:during` | 110 | 记尝试次数 |
+| runtime_state | `runtime_state.llm_after` | `llm:after` | 110 | 解析待执行调用、消费中途消息 |
 | runtime_state | `runtime_state.tool_before` | `tool:before` | 450 | 摘掉不执行的调用 |
-| runtime_state | `runtime_state.tool_during` | `tool:during` | 100 | 标记执行中 |
+| runtime_state | `runtime_state.tool_during` | `tool:during` | 110 | 标记执行中 |
 | runtime_state | `runtime_state.tool_after` | `tool:after` | 400 | 记统计、摘调用、消费中途消息 |
 | runtime_state | `runtime_state.trace_before` | `trace:before` | 300 | 绑定游标、上限、权限、模型 |
 | runtime_state | `runtime_state.trace_end` | `trace:end` | 400 | 释放执行态 |
-| runtime_state | `runtime_state.turn_before` | `turn:before` | 100 | 开新的一轮 |
+| runtime_state | `runtime_state.turn_before` | `turn:before` | 110 | 开新的一轮 |
 | session | `session.llm_after` | `llm:after` | 200 | 定稿 assistant 消息 |
 | session | `session.llm_before` | `llm:before` | 300 | 清空草稿槽 |
 | session | `session.tool_after` | `tool:after` | 410 | 写工具结果消息 |
@@ -159,7 +161,7 @@
 | checkpoint | `checkpoint.tool_after` | `tool:after` | 900 | 落盘屏障 |
 | checkpoint | `checkpoint.trace_end` | `trace:end` | 900 | 落盘屏障 |
 
-合计 **29 个**（`hook.site` 一个实例挂满十个位点）。
+合计 **30 个**（`hook.site` 一个实例挂满十个位点）。
 
 ---
 
@@ -177,12 +179,12 @@
 
 | 你想干的事 | 取法 | 现成的例子 |
 |---|---|---|
-| 本位点最先跑，产出给别人读 | 100 | `runtime_state.llm_before` 算出 `context_tokens` 给 compression |
+| 本位点最先跑，产出给别人读 | 100 | `prompts.llm_before` 先把系统提示词填进 payload，`runtime_state`(110) 才算得到它 |
 | 读本位点前面某人的产出 | 排在他后面 | `session.tool_after`(410) 读 `runtime_state.tool_after`(400) 记完的统计 |
 | 读"所有判定"再动手 | 排在该位点最后一个判定者之后 | `runtime_state.tool_before`(450) 读 `decisions` |
 | 只在旁边看，不参与判定 | 500 段 | `hook.site` |
 
-**留空隙**：现有取值是 50 / 100 / 200 / 300 / 350 / 400 / 410 / 435 / 445 / 450 / 460 / 500 / 900 ——
+**留空隙**：现有取值是 50 / 100 / 110 / 200 / 300 / 400 / 410 / 435 / 445 / 450 / 460 / 500 / 900 ——
 中间空着很多。要插在两者之间就取中间值（排在 100 与 200 之间取 150），**别去动别人已有的数**。
 
 改完记得：
