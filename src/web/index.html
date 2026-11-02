@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>agent-frame</title>
+    <!-- 空图标：浏览器会主动要 /favicon.ico，不给它就每次日志里多一条 404。 -->
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span>agent-frame</span>
+      </div>
+
+      <button id="new-session" class="new-session" type="button">＋ 新建会话</button>
+
+      <nav id="sessions" class="sessions" aria-label="会话列表"></nav>
+
+      <footer class="sidebar-foot">
+        用户：<span id="user-id"></span>
+      </footer>
+    </aside>
+
+    <main class="chat">
+      <header class="chat-head">
+        <div class="chat-title">
+          <h1 id="session-title">未选择会话</h1>
+          <p id="session-meta" class="muted"></p>
+        </div>
+        <div class="chat-actions">
+          <button id="traces-open" class="ghost" type="button" title="看每一次执行花在哪儿">轨迹</button>
+          <button id="replay-open" class="ghost" type="button" title="从第一轮开始重放这段对话">回放</button>
+          <button id="search-open" class="ghost" type="button" title="搜索当前会话（Ctrl/⌘+F）">搜索</button>
+          <span id="connection" class="pill">连接中…</span>
+        </div>
+      </header>
+
+      <section id="transcript" class="transcript">
+        <section id="messages" class="messages" aria-live="polite"></section>
+
+        <!-- 沉在右下角：在看历史（没贴底）时才露出来，点一下回到最新一条。 -->
+        <button
+          id="to-latest"
+          class="to-latest"
+          type="button"
+          title="回到最新一条消息"
+          aria-label="回到最新一条消息"
+          hidden
+        >
+          ↓ 最新
+        </button>
+
+        <nav id="turns" class="turns" aria-label="轮次导航" hidden></nav>
+        <div id="turn-preview" class="turn-preview" hidden></div>
+
+        <div id="replay" class="replay" hidden>
+          <span id="replay-count" class="replay-count">0 / 0</span>
+          <button class="replay-step" type="button" data-replay="pause">暂停</button>
+          <button class="replay-step" type="button" data-replay="stop">退出</button>
+        </div>
+
+        <section id="traces" class="traces" hidden aria-label="轨迹瀑布">
+          <div class="traces-head">
+            <span class="traces-title">轨迹</span>
+            <span id="traces-note" class="traces-note"></span>
+            <button class="traces-close" type="button" data-traces="close" aria-label="关闭">×</button>
+          </div>
+          <div id="traces-body" class="traces-body"></div>
+        </section>
+
+        <div id="search" class="search" hidden>
+          <input
+            id="search-input"
+            class="search-input"
+            type="search"
+            placeholder="搜当前会话…"
+            autocomplete="off"
+            aria-label="搜索当前会话"
+          />
+          <label class="search-scope">
+            <input id="search-tools" type="checkbox" />
+            含工具输出
+          </label>
+          <span id="search-count" class="search-count">0 / 0</span>
+          <button class="search-step" type="button" data-search="prev" aria-label="上一个">↑</button>
+          <button class="search-step" type="button" data-search="next" aria-label="下一个">↓</button>
+          <button class="search-step" type="button" data-search="close" aria-label="关闭">×</button>
+        </div>
+      </section>
+
+      <section id="todos" class="todos" aria-label="待办" hidden></section>
+
+      <form id="composer" class="composer">
+        <textarea
+          id="input"
+          rows="1"
+          placeholder="说点什么…（Enter 发送，Shift+Enter 换行）"
+        ></textarea>
+        <button
+          id="mic"
+          class="composer-mic"
+          type="button"
+          hidden
+          aria-label="语音输入"
+          title="语音输入（点一下开始）"
+        >
+          🎤
+        </button>
+        <button id="send" type="submit">发送</button>
+      </form>
+
+      <footer id="stats" class="stats" aria-label="会话统计"></footer>
+    </main>
+
+    <div id="question-layer" class="approval-layer question-layer" hidden></div>
+    <div id="approval-layer" class="approval-layer" hidden></div>
+    <div id="toast" class="toast" role="status" hidden></div>
+
+    <script type="module" src="/js/main.js"></script>
+  </body>
+</html>

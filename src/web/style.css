@@ -1,0 +1,1850 @@
+/* 一套变量管住全部颜色与间距：换主题只改这里。 */
+:root {
+  --bg: #ffffff;
+  --bg-sub: #f7f7f8;
+  --bg-code: #f4f5f7;
+  --border: #e4e5e9;
+  --text: #1b1c20;
+  --muted: #6b7076;
+  --accent: #2f6fed;
+  --accent-soft: #eaf1ff;
+  --warn: #a15c00;
+  /* 工具运行中时卡片那圈边框的颜色。 */
+  --accent-line: #c7dbff;
+  /* 搜到的那几处：普通命中淡黄，当前这一处加深并描一圈。 */
+  --hit: #ffe58a;
+  --hit-active: #ffc53d;
+  --danger: #c0392b;
+  --radius: 12px;
+  --shadow: 0 8px 30px rgb(16 18 22 / 12%);
+  /* 左栏宽度。审批层的左边界也用它 —— 卡片别盖住会话列表。 */
+  --sidebar: 264px;
+  /* 对话内容的宽度上限：消息、待办面板、输入框都用它，三者的左右边界才对得齐。
+     想再宽/再窄只改这一个数 —— 其余几处都从它派生。 */
+  --content: 1040px;
+  /* 右侧刻度轨的宽度。窗口变窄时内容列要给它让路，左右各让这么多（对称才好居中）。 */
+  --rail: 52px;
+  --mono: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* hidden 必须真的藏起来。
+   UA 那条 [hidden] { display: none } 压不过作者样式里的 display ——
+   审批层带了 display: grid，不写这条它就一直铺在页面最上面，把所有点击都吃掉。 */
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  color: var(--text);
+  background: var(--bg);
+  font: 15px/1.6 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* ---------- 左栏 ---------- */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: var(--sidebar);
+  flex: 0 0 var(--sidebar);
+  padding: 18px 14px;
+  background: var(--bg-sub);
+  border-right: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 6px 6px;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+}
+
+.brand-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.new-session {
+  padding: 9px 12px;
+  color: var(--accent);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.new-session:hover {
+  border-color: var(--accent);
+}
+
+.sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.session-item {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  border-radius: 9px;
+}
+
+.session-item:hover {
+  background: rgb(0 0 0 / 4%);
+}
+
+.session-open {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 4px 9px 10px;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* 删除键常驻但压暗：触摸屏上没有 hover，藏起来就点不到了。 */
+.session-delete {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  margin-right: 6px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.35;
+}
+
+.session-item:hover .session-delete,
+.session-delete:focus-visible {
+  opacity: 1;
+}
+
+.session-delete:hover {
+  color: var(--danger);
+  background: rgb(192 57 43 / 10%);
+}
+
+.session-item[aria-current="true"] {
+  background: var(--accent-soft);
+}
+
+.session-item .name {
+  display: block;
+  overflow: hidden;
+  font-weight: 550;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.session-item .time {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* 分叉来源：比标题小一号、压暗，一眼能看出这两条是一支的。 */
+.session-item .parent {
+  display: block;
+  overflow: hidden;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sidebar-foot {
+  padding-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- 右栏 ---------- */
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.chat-title h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.chat-title p {
+  margin: 2px 0 0;
+  font-size: 12px;
+}
+
+.chat-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pill {
+  padding: 3px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--bg-sub);
+  border-radius: 999px;
+}
+
+.pill[data-state="ready"] {
+  color: #12683f;
+  background: #e7f6ee;
+}
+
+.pill[data-state="offline"] {
+  color: var(--danger);
+  background: #fdecea;
+}
+
+button.ghost {
+  padding: 5px 12px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+button.ghost:not(:disabled):hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+button.ghost:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- 对话区与轮次导航 ---------- */
+
+/* 对话区：内容是一列**居中**的宽（--content + 两侧内边距），刻度轨叠在右边。
+   用绝对定位而不是分列，是为了让"居中"对着整个对话区算 —— 分列的话消息列会
+   整体左移 26px，跟下面居中的输入框差半个轨道宽。 */
+.transcript {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* 整列收口在这儿：用户气泡的右边界因此与输入框的右边界是同一条线。
+   窗口窄到放不下 content + 轨道时，左右各留一条轨道宽 —— 内容别钻到刻度底下。 */
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: min(calc(var(--content) + 48px), calc(100% - 2 * var(--rail)));
+  height: 100%;
+  margin: 0 auto;
+  padding: 26px 24px 8px;
+  overflow-y: auto;
+}
+
+/* ---------- 回到最新 ---------- */
+
+/* 沉在对话区右下角，只在"没贴底"时出现（谁管显隐见 view.js 的 syncToLatest）。
+   右边让开刻度轨：那颗键压在刻度上就点歪了。 */
+.to-latest {
+  position: absolute;
+  right: calc(var(--rail) + 4px);
+  bottom: 14px;
+  z-index: 6;
+  padding: 6px 14px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.to-latest:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.turns {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: var(--rail);
+  padding: 30px 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.turns::-webkit-scrollbar {
+  display: none;
+}
+
+/* 一条刻度 = 一轮。间距 10px，跟 DSH 的轨道一个密度。 */
+.turn-tick {
+  position: relative;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 3px;
+  padding: 0;
+  background: var(--border);
+  border: 0;
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    width 120ms ease,
+    background 120ms ease;
+}
+
+.turn-tick:hover,
+.turn-tick:focus-visible {
+  background: var(--muted);
+}
+
+/* 正在读的那一轮：更长、更亮。 */
+.turn-tick[data-active="true"] {
+  width: 26px;
+  background: var(--accent);
+}
+
+/* 这一轮出过图：左边点一个小点，一眼看出哪轮画过。 */
+.turn-tick.has-chart::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -9px;
+  width: 5px;
+  height: 5px;
+  background: var(--warn);
+  border-radius: 50%;
+}
+
+/* 悬浮预览：锚在刻度左边，不挡消息。 */
+.turn-preview {
+  position: absolute;
+  right: 60px;
+  z-index: 6;
+  width: 260px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+}
+
+.turn-preview-head {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.turn-preview-prompt {
+  margin: 2px 0 6px;
+  overflow: hidden;
+  font-weight: 550;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.turn-preview-response {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 13px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* 跳过去的那一条闪一下边框 —— 否则用户不知道落点在哪。 */
+.jump-target {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* ---------- 消息 ---------- */
+
+.empty {
+  margin: auto;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* 列表顶上那条"加载更早"。滚到顶也会自动加载，这个按钮是给"短到不用滚"的会话兜底的。 */
+.load-earlier {
+  align-self: center;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.load-earlier:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: var(--content);
+}
+
+.message--user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.message .role {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* 每句话下面那个复制键。平时安静，指上去才亮边框。 */
+.copy {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 1px 8px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.copy:hover {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* 每条消息底下那排小键（复制 / 朗读）。 */
+.message-tools {
+  display: flex;
+  gap: 2px;
+  align-self: flex-start;
+}
+
+/* 用户的气泡靠右，按钮也跟着靠右。 */
+.message--user .copy,
+.message--user .message-tools {
+  align-self: flex-end;
+}
+
+/* 正在念的那一条：按钮亮起来，等于告诉你再点一下会停。 */
+.copy[data-speaking="true"] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.bubble {
+  padding: 11px 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.message--user .bubble {
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+
+.message--assistant .bubble {
+  background: var(--bg);
+}
+
+/* Markdown 渲染出来的回答：块级排版，段落内部仍保留换行。 */
+
+.bubble--md {
+  white-space: normal;
+}
+
+.bubble--md > *:first-child {
+  margin-top: 0;
+}
+
+.bubble--md > *:last-child {
+  margin-bottom: 0;
+}
+
+.bubble--md p {
+  margin: 0 0 8px;
+  white-space: pre-wrap;
+}
+
+.bubble--md h2,
+.bubble--md h3,
+.bubble--md h4 {
+  margin: 12px 0 6px;
+  line-height: 1.35;
+  font-size: 15px;
+}
+
+.bubble--md ul,
+.bubble--md ol {
+  margin: 0 0 8px;
+  padding-left: 22px;
+}
+
+.bubble--md li {
+  margin: 2px 0;
+}
+
+.bubble--md blockquote {
+  margin: 0 0 8px;
+  padding-left: 10px;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
+}
+
+.bubble--md hr {
+  margin: 12px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.bubble--md a {
+  color: var(--accent);
+}
+
+/* 表格：宽了就在气泡里横向滚动，别把整个对话撑开。 */
+.bubble--md .md-table {
+  margin: 0 0 8px;
+  overflow-x: auto;
+}
+
+.bubble--md table {
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.bubble--md th,
+.bubble--md td {
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.bubble--md th {
+  background: var(--bg-sub);
+  font-weight: 600;
+}
+
+.bubble--md .md-right {
+  text-align: right;
+}
+
+.bubble--md .md-center {
+  text-align: center;
+}
+
+.bubble--md .md-left {
+  text-align: left;
+}
+
+.bubble--md code {
+  padding: 1px 5px;
+  background: var(--bg-code);
+  border-radius: 5px;
+  font-family: var(--mono);
+  font-size: 0.92em;
+}
+
+.bubble--md pre {
+  margin: 0 0 8px;
+  padding: 10px 12px;
+  overflow: auto;
+  background: var(--bg-code);
+  border-radius: 10px;
+}
+
+.bubble--md pre code {
+  padding: 0;
+  background: none;
+  white-space: pre;
+}
+
+.thought {
+  padding: 9px 12px;
+  background: var(--bg-sub);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.thought summary,
+.tool-card summary,
+.tool-call summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+.tool-card summary,
+.tool-call summary {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.tool-card summary .size {
+  margin-left: auto;
+  opacity: 0.7;
+}
+
+.thought .thought-body {
+  max-height: 260px;
+  padding-top: 8px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.thought--live {
+  border-style: solid;
+}
+
+.tool-call,
+.tool-card {
+  padding: 9px 12px;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+
+/* 两张卡片的标题行用同一套字：卡片正文是等宽字体，标题行退回正文字体才不显得像代码。 */
+.tool-call summary,
+.tool-card summary {
+  margin-bottom: 4px;
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.tool-call code,
+.tool-card pre {
+  display: block;
+  max-height: 300px;
+  margin: 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.draft .caret::after,
+[data-replay-typing] .caret::after {
+  content: "▍";
+  margin-left: 2px;
+  animation: blink 1s steps(2) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---------- 工具调用：运行中的动效 ---------- */
+
+/* 工具跑得久的时候，界面上必须看得出"还在动"。三处一起给信号：
+   卡片换成蓝边、标题行左边一个跳动的点、底边一道来回扫的流光。 */
+.tool-call[data-state="running"] {
+  position: relative;
+  overflow: hidden;
+  border-color: var(--accent-line);
+}
+
+.tool-call[data-state="running"] summary::before {
+  content: "";
+  flex: 0 0 auto;
+  align-self: center;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: tool-pulse 1s ease-in-out infinite;
+}
+
+/* 工具名上扫过一道亮蓝，节奏与底边那道流光一致。 */
+.tool-call[data-state="running"] summary strong {
+  background-image: linear-gradient(90deg, var(--accent) 0%, #86b0ff 45%, var(--accent) 90%);
+  background-size: 200% 100%;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: tool-text 1.5s linear infinite;
+}
+
+/* 标题行右端：「运行中 · 12s」。文字由 JS 每秒刷新，这里只管摆位与显隐。 */
+.tool-status {
+  display: none;
+  margin-left: auto;
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.tool-call[data-state="running"] .tool-status {
+  display: inline;
+}
+
+/* 底边那道流光：一条渐变边，靠背景位置平移造出"扫过去"。 */
+.tool-call[data-state="running"]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background-image: linear-gradient(90deg, transparent 20%, var(--accent) 50%, transparent 80%);
+  background-size: 200% 100%;
+  animation: tool-sweep 1.5s linear infinite;
+}
+
+@keyframes tool-pulse {
+  50% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+}
+
+@keyframes tool-text {
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes tool-sweep {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+/* 用户开了"减少动态效果"就停下 —— 蓝边与「运行中」照样能说明它在跑。 */
+@media (prefers-reduced-motion: reduce) {
+  .tool-call[data-state="running"] summary::before,
+  .tool-call[data-state="running"] summary strong,
+  .tool-call[data-state="running"]::after {
+    animation: none;
+  }
+}
+
+/* ---------- 待办 ---------- */
+
+/* 面板夹在消息区与输入区之间。收起之后只剩一行计数，不占地方。
+   width 必须显式写：交叉轴上的 auto 边距会取消 flex 拉伸，只给 max-width 的话
+   它会缩成内容宽，跟下面定宽的输入框对不上。 */
+.todos {
+  width: 100%;
+  max-width: min(var(--content), calc(100% - 2 * var(--rail) - 48px));
+  margin: 0 auto 8px;
+}
+
+.todos-box {
+  background: var(--bg-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* 这一行就是开关：整块可点，别处不再单独放按钮。 */
+.todos-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* 默认的三角各浏览器长得不一样，收起来自己画。 */
+.todos-head::-webkit-details-marker {
+  display: none;
+}
+
+.todos-title::before {
+  content: "▸ ";
+}
+
+.todos-box[open] .todos-title::before {
+  content: "▾ ";
+}
+
+.todos-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.todos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 26vh;
+  margin: 0;
+  padding: 0 14px 10px;
+  overflow: auto;
+  list-style: none;
+}
+
+/* 三态用前缀符号区分，不靠颜色单独承载信息。 */
+.todo {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.todo::before {
+  content: "○ ";
+  color: var(--muted);
+}
+
+.todo[data-status="in_progress"] {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.todo[data-status="in_progress"]::before {
+  content: "◐ ";
+  color: var(--accent);
+}
+
+.todo[data-status="completed"] {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.todo[data-status="completed"]::before {
+  content: "● ";
+}
+
+/* ---------- 输入区 ---------- */
+
+/* 与消息区同一条中线、同一个宽度：左边界对齐模型消息，右边界对齐用户气泡。 */
+.composer {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  width: 100%;
+  max-width: min(var(--content), calc(100% - 2 * var(--rail) - 48px));
+  margin: 14px auto 8px;
+}
+
+.composer textarea {
+  flex: 1;
+  max-height: 200px;
+  padding: 11px 14px;
+  color: inherit;
+  background: var(--bg-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: inherit;
+  resize: none;
+}
+
+.composer textarea:focus {
+  background: var(--bg);
+  border-color: var(--accent);
+  outline: none;
+}
+
+.composer button {
+  padding: 11px 20px;
+  color: #fff;
+  background: var(--accent);
+  border: 0;
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.composer button[data-mode="stop"] {
+  background: var(--danger);
+}
+
+.composer button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* 输入框右边的麦克风。要盖过 .composer button 那条通用样式，所以多带一层。 */
+.composer button.composer-mic {
+  flex: 0 0 auto;
+  width: 42px;
+  padding: 11px 0;
+  color: var(--muted);
+  background: var(--bg-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.composer button.composer-mic:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.composer button.composer-mic[data-state="listening"] {
+  color: var(--danger);
+  border-color: var(--danger);
+  animation: mic-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  50% {
+    box-shadow: 0 0 0 4px rgb(192 57 43 / 14%);
+  }
+}
+
+/* ---------- 回放 ---------- */
+
+/* 浮在对话区左上角：进度 + 暂停 / 退出。右边留给搜索条。 */
+.replay {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  z-index: 7;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 8px 5px 12px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+}
+
+.replay-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.replay-step {
+  padding: 2px 9px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 11.5px;
+  line-height: 1.6;
+  cursor: pointer;
+}
+
+.replay-step:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+/* ---------- 统计条 ---------- */
+
+.stats {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  max-width: min(var(--content), calc(100% - 2 * var(--rail) - 48px));
+  margin: 0 auto;
+  padding: 0 0 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stats .sep {
+  opacity: 0.45;
+}
+
+.ring {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+}
+
+.ring svg {
+  width: 18px;
+  height: 18px;
+  transform: rotate(-90deg);
+}
+
+.ring circle {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.ring .track {
+  stroke: var(--border);
+}
+
+.ring .value {
+  stroke: var(--accent);
+  transition: stroke-dashoffset 240ms ease;
+}
+
+.ring[data-tone="warn"] .value {
+  stroke: var(--warn);
+}
+
+.ring[data-tone="danger"] .value {
+  stroke: var(--danger);
+}
+
+/* ---------- 轨迹瀑布 ----------
+   盖在对话区上（不是新开一页）：看完一眼就关，输入框还在下面。 */
+.traces {
+  position: absolute;
+  inset: 0;
+  /* 盖住对话区里那两个浮条（搜索 7、回放 7）：面板打开时它们不该浮在上面。 */
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.traces-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.traces-title {
+  font-weight: 650;
+}
+
+.traces-note {
+  flex: 1;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.traces-close {
+  width: 26px;
+  height: 26px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.traces-close:hover {
+  color: var(--text);
+  background: var(--bg-sub);
+}
+
+.traces-body {
+  flex: 1;
+  min-height: 0;
+  padding: 12px 16px 24px;
+  overflow-y: auto;
+}
+
+.traces-empty,
+.traces-loading {
+  margin: 24px 0;
+  color: var(--muted);
+}
+
+/* 抬头那行按钮里，打开着的那个亮一点。 */
+button.ghost[data-open="true"] {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.trace {
+  padding: 10px 0 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* 抬头就是折叠键：整行可点，键盘上也能用（原生 button，回车/空格都行）。 */
+.trace-head {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  width: 100%;
+  padding: 0;
+  color: var(--muted);
+  text-align: left;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.trace-head:hover {
+  color: var(--text);
+}
+
+.trace-head:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 折角：展开时朝下，折起来时朝右。 */
+.trace-caret {
+  width: 10px;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.trace-rows {
+  margin-top: 6px;
+}
+
+.trace-when {
+  font-variant-numeric: tabular-nums;
+}
+
+.trace-status {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--bg-sub);
+}
+
+.trace-status[data-status="completed"] {
+  color: #12683f;
+  background: #e7f6ee;
+}
+
+.trace-status[data-status="failed"],
+.trace-status[data-status="aborted"] {
+  color: var(--danger);
+  background: #fdecea;
+}
+
+.trace-status[data-status="budget_exceeded"] {
+  color: var(--warn);
+  background: #fdf1dc;
+}
+
+.trace-reason {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 总耗时靠右，一眼能比出哪一次跑得久。 */
+.trace-total {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.trace-row {
+  display: grid;
+  grid-template-columns: 34px 96px 1fr 56px;
+  gap: 8px;
+  align-items: center;
+  padding: 1px 0;
+  font-size: 12px;
+}
+
+.trace-turn {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.trace-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 轨道就是整条 trace 的长度；横条按比例摆上去，空隙自然显出来。 */
+.trace-track {
+  position: relative;
+  height: 10px;
+  background: var(--bg-sub);
+  border-radius: 3px;
+}
+
+.trace-bar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  min-width: 2px;
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+/* 模型调用单独一个颜色：它通常就是全部耗时。 */
+.trace-bar[data-kind="llm"] {
+  background: #7a5af8;
+}
+
+.trace-row:hover .trace-bar {
+  background: var(--hit-active);
+}
+
+.trace-ms {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ---------- 图表 ---------- */
+
+.chart {
+  margin: 0;
+  padding: 12px 14px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* 图插在正文中间时收掉外框：气泡本身已经是一层卡片，再套一层像两个盒子。 */
+
+.bubble--md > .chart {
+  margin: 10px 0;
+  padding: 8px 0;
+  background: transparent;
+  border: 0;
+}
+
+.chart-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.chart-title {
+  font-weight: 650;
+}
+
+.chart-kind {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* 网格、刻度、轴标题都走 CSS 变量，换主题只改一处。 */
+.chart-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.chart-tick {
+  fill: var(--muted);
+  font-size: 11px;
+}
+
+.chart-axis-title {
+  fill: var(--muted);
+  font-size: 12px;
+}
+
+.chart-dot {
+  stroke: var(--bg);
+  stroke-width: 1.5;
+}
+
+.chart-bar {
+  transition: opacity 120ms ease;
+}
+
+.chart-bar:hover {
+  opacity: 0.82;
+}
+
+.chart-slice-label {
+  fill: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+/* 数据表：图看趋势，它读精确值，也是屏幕阅读器的兜底。 */
+.chart-data {
+  margin-top: 8px;
+  font-size: 12.5px;
+}
+
+.chart-data summary {
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.chart-data table {
+  margin-top: 6px;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-data th,
+.chart-data td {
+  padding: 3px 12px 3px 0;
+  border-bottom: 1px solid var(--border);
+  font-weight: 400;
+  text-align: right;
+}
+
+.chart-data th:first-child,
+.chart-data td:first-child {
+  text-align: left;
+}
+
+/* 数据表标题行：左边「数据」，右边「复制 TSV」。列表默认的小三角收起来，自己画一个。 */
+.chart-data-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  list-style: none;
+}
+
+.chart-data-head::-webkit-details-marker {
+  display: none;
+}
+
+.chart-data-head::before {
+  content: "▸";
+  color: var(--muted);
+}
+
+.chart-data[open] .chart-data-head::before {
+  content: "▾";
+}
+
+.chart-copy {
+  margin-left: auto;
+  padding: 1px 8px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 11.5px;
+  line-height: 1.7;
+  cursor: pointer;
+}
+
+.chart-copy:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.chart-copy-area {
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- 图表交互 ---------- */
+
+/* 标题变成「放大」的入口：光标是放大镜，点了开全屏。 */
+.chart-title {
+  padding: 0;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-weight: 650;
+  cursor: zoom-in;
+}
+
+.chart-title:hover {
+  color: var(--accent);
+}
+
+/* 标题行右侧：图种 + 两个小按钮。 */
+.chart-meta {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.chart-actions {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.chart-action {
+  padding: 2px 8px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 11.5px;
+  line-height: 1.6;
+  cursor: pointer;
+}
+
+.chart-action:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+/* 图例条目多系列时是可点的：点掉一条系列，再点回来。 */
+button.chart-legend-item {
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+button.chart-legend-item:hover {
+  color: var(--text);
+}
+
+.chart-legend-item[data-off="true"] {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+/* 悬停：一格的高亮带 + 一条准星 + 一个读数小窗。 */
+.chart-body {
+  position: relative;
+}
+
+.chart-band {
+  fill: var(--accent);
+  opacity: 0.08;
+}
+
+.chart-crosshair {
+  stroke: var(--muted);
+  stroke-dasharray: 3 3;
+  stroke-width: 1;
+  opacity: 0.6;
+  shape-rendering: crispEdges;
+}
+
+.chart-readout {
+  position: absolute;
+  top: 10px;
+  z-index: 3;
+  min-width: 96px;
+  max-width: 150px;
+  padding: 6px 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.chart-readout-head {
+  margin-bottom: 3px;
+  color: var(--muted);
+}
+
+.chart-readout-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.chart-readout-row strong {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-readout-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+}
+
+/* 全屏放大：遮罩 + 里面重新画的一份图（交互照样能用）。 */
+.chart-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  padding: 32px;
+  background: rgb(16 18 22 / 55%);
+  place-items: center;
+}
+
+.chart-zoom-inner {
+  width: min(96vw, 1180px);
+  max-height: 92vh;
+  overflow: auto;
+}
+
+/* 窄屏放不下刻度轨：收起来，内容把让出来的那两条也吃掉。 */
+@media (max-width: 880px) {
+  .turns,
+  .turn-preview {
+    display: none;
+  }
+
+  /* 没有轨道要躲了，消息列占满（内边距仍在），与下面几个用同一个宽度。 */
+  .messages {
+    max-width: 100%;
+  }
+
+  .todos,
+  .composer,
+  .stats {
+    max-width: calc(100% - 48px);
+  }
+}
+
+/* ---------- 审批 ---------- */
+
+.approval-layer {
+  position: fixed;
+  inset: 0;
+  /* 只盖住对话区：左栏留着，弹着审批也能切会话。 */
+  left: var(--sidebar);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(16 18 22 / 22%);
+  /* 底下的页面照样能点 —— 审批是"要你决定"，不是"把你锁住"。 */
+  pointer-events: none;
+}
+
+.approval-card {
+  width: min(560px, 100%);
+  padding: 20px;
+  background: var(--bg);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  pointer-events: auto;
+}
+
+.approval-card h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.approval-card .reason {
+  margin: 0 0 14px;
+  color: var(--warn);
+}
+
+.approval-card pre {
+  max-height: 220px;
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  overflow: auto;
+  background: var(--bg-code);
+  border-radius: 10px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.approval-card input {
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 9px 12px;
+  color: inherit;
+  background: var(--bg-sub);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font: inherit;
+}
+
+.approval-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.approval-actions .deny {
+  padding: 9px 16px;
+  color: var(--danger);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.approval-actions .approve {
+  padding: 9px 18px;
+  color: #fff;
+  background: var(--accent);
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+/* ---------- 提问 ---------- */
+
+/* 层与卡片直接复用审批那一套（.approval-layer / .approval-card 都带上了），
+   这里只补多出来的几块：问题分组、选项、自由作答的输入框。 */
+
+.question-card {
+  max-height: min(620px, calc(100vh - 48px));
+  overflow: auto;
+}
+
+.question-block + .question-block {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.question-card .question-text {
+  margin: 0 0 10px;
+  font-weight: 550;
+}
+
+.question-options {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* 两个格：左边那个圆点/方块，右边上下两行是标签与说明。
+   input 得把 .approval-card input 的满宽和输入框外观盖回去。 */
+.question-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  padding: 9px 12px;
+  background: var(--bg-sub);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.question-option input {
+  grid-row: span 2;
+  width: auto;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+}
+
+.question-option .question-label {
+  font-weight: 500;
+}
+
+.question-option .question-hint {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+/* ---------- 会话内搜索 ---------- */
+
+/* 浮在对话区右上角：不占版面，也不挡消息。右边让出刻度轨那一条。 */
+.search {
+  position: absolute;
+  top: 10px;
+  right: calc(var(--rail) + 10px);
+  z-index: 7;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.search-input {
+  width: 200px;
+  padding: 5px 8px;
+  color: inherit;
+  background: var(--bg-sub);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.search-input:focus {
+  background: var(--bg);
+  border-color: var(--accent);
+  outline: none;
+}
+
+/* 「含工具输出」：默认不勾，只搜对话正文。 */
+.search-scope {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.search-scope input {
+  width: auto;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.search-count {
+  min-width: 56px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.search-step {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.search-step:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+/* 命中：淡黄底，字色仍是正文色（别把内容变成看不清的高亮）。 */
+mark.search-hit {
+  padding: 0 1px;
+  background: var(--hit);
+  border-radius: 3px;
+  color: inherit;
+}
+
+mark.search-hit--active {
+  background: var(--hit-active);
+  outline: 2px solid var(--warn);
+  outline-offset: 1px;
+}
+
+/* ---------- 提示 ---------- */
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  max-width: 560px;
+  padding: 10px 16px;
+  color: #fff;
+  background: var(--danger);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  transform: translateX(-50%);
+}

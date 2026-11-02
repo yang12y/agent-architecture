@@ -1,0 +1,15 @@
+# 换行符统一成 LF：仓库里存 LF、工作区也检出 LF。
+# 不固定的话，Windows 上 core.autocrlf 会把每个文件都"改"一遍，产生大量假改动。
+* text=auto eol=lf
+
+# 二进制文件不做任何转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.xlsx binary
+*.docx binary
+*.pptx binary
+*.zip binary

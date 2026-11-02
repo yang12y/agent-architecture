@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# 运行期数据：会话日志（meta.json + entries.jsonl）默认落在这里
+.data/
+
+# 虚拟环境与 uv 本地缓存（均不提交；uv.lock 要提交）
+.venv/
+.uv-cache/
+.tmp/
+
+# pytest 缓存与它在受限环境下遗留的临时目录
+.pytest_cache/
+pytest-cache-files-*/
+
+# 本地配置
+.env
+.env.*
+!.env.example
+
+# 编辑器
+.idea/
+.vscode/
